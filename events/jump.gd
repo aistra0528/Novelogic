@@ -24,4 +24,4 @@ func require_trace() -> bool:
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, " Call: " if trace else " Jump: ", timeline, "@", label)
+	return str("L", start_line + 1, " Jump with trace: " if trace else " Jump: ", timeline, "@", label)

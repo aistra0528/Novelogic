@@ -1,6 +1,8 @@
 # Novelogic
 Create interactive fictions in your Godot games.
 
+[VSC Extension](https://github.com/aistra0528/novelogic-vsc-extension)
+
 ## Get Started
 
 Enable Novelogic in Project Settings > Plugins.
@@ -46,11 +48,11 @@ Novelogic uses four whitespaces at the beginning of a line to create or increase
 hp_max = 100
 # hp = hp_max if hp is not defined
 hp ?= hp_max
-percent = 150
+rate = 150
 damage = randi_range(10, 20)
-hp -= damage * percent / 100
+hp -= damage * rate / 100
 game_over = hp <= 0
-text = "HP: {hp}/{hp_max}"
+log = "HP: {hp}/{hp_max}"
 
 # Global variables
 player.name = "You"
@@ -120,4 +122,21 @@ func handle_input(text: String, escape: bool = true):
 
 ```
 player.name = ? "What's your name?"
+```
+
+### Call
+```gdscript
+class_name MyExtension extends ExprExtension
+...
+func do_something(...):
+    ...
+```
+
+```gdscript
+func _ready():
+    Novelogic.ext = MyExtension.new()
+```
+
+```
+do_something(...)
 ```

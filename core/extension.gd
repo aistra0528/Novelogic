@@ -1,7 +1,7 @@
 class_name ExprExtension extends RandomNumberGenerator
 
-var _array_fresh := {}
-var _item_fresh := {}
+var _decks := {}
+var _last_cards := {}
 var execute_error := FAILED
 
 
@@ -10,8 +10,8 @@ func _init():
 
 
 func clear():
-	_array_fresh.clear()
-	_item_fresh.clear()
+	_decks.clear()
+	_last_cards.clear()
 
 
 func d(to: int) -> int:
@@ -22,19 +22,19 @@ func dice(from: int, to: int) -> int:
 	return randi_range(from, to)
 
 
-func fresh(array: Array) -> Variant:
-	var hash := array.hash()
-	if not hash in _array_fresh.keys():
-		array.shuffle()
-		_array_fresh[hash] = array
-		_item_fresh[hash] = array.back()
-	if _array_fresh[hash].is_empty():
-		array.shuffle()
-		while is_same(_item_fresh[hash], array.front()):
-			array.shuffle()
-		_array_fresh[hash] = array
-		_item_fresh[hash] = array.back()
-	return _array_fresh[hash].pop_front()
+func draw(deck: Array) -> Variant:
+	var hash := deck.hash()
+	if not hash in _decks.keys():
+		deck.shuffle()
+		_decks[hash] = deck
+		_last_cards[hash] = deck.back()
+	if _decks[hash].is_empty():
+		deck.shuffle()
+		while is_same(_last_cards[hash], deck.front()):
+			deck.shuffle()
+		_decks[hash] = deck
+		_last_cards[hash] = deck.back()
+	return _decks[hash].pop_front()
 
 
 func execute_expression(expression: String, line: int) -> Variant:

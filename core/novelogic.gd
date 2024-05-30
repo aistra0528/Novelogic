@@ -141,6 +141,8 @@ func handle_event(index: int, ignore_indent: bool = false):
 			(current_event as TimelineAssign).execute()
 		TimelineEvent.CONDITION:
 			(current_event as TimelineCondition).execute()
+		TimelineEvent.CALL:
+			(current_event as TimelineCall).execute()
 
 
 func handle_choice(choice: String):

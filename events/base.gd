@@ -11,6 +11,7 @@ enum {
 	INPUT,
 	ASSIGN,
 	CONDITION,
+	CALL,
 }
 
 const Regex := {
@@ -25,6 +26,7 @@ const Regex := {
 	INPUT = "^{INDENT}*{VARIABLE} = \\? {STRING}$",
 	ASSIGN = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
+	CALL = "^{INDENT}*{NAME}\\(.*\\)$",
 }
 
 const Capture := {
@@ -70,6 +72,8 @@ static func create(line: String) -> TimelineEvent:
 			event = TimelineAssign.new()
 		CONDITION:
 			event = TimelineCondition.new()
+		CALL:
+			event = TimelineCall.new()
 		_:
 			event = TimelineText.new()
 	event.type = type
@@ -97,6 +101,8 @@ static func match_type(line: String) -> int:
 		return ASSIGN
 	elif reg.compile(Regex.CONDITION.format(Capture)) == OK and reg.search(line):
 		return CONDITION
+	elif reg.compile(Regex.CALL.format(Capture)) == OK and reg.search(line):
+		return CALL
 	else:
 		return TEXT
 
