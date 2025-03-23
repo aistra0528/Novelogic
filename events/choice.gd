@@ -11,7 +11,7 @@ func process():
 	reg.compile(Regex.CHOICE.format(Capture))
 	var result := reg.search(lines[0])
 	if result:
-		choice = result.get_string("string")
+		choice = result.get_string("expr")
 		expression = result.get_string("expression")
 	processed = true
 

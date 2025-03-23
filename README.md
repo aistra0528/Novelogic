@@ -77,22 +77,23 @@ signal text_started(text: String)
 ```
 
 ```
-Hello world!
+Hello!
 
-Hello,
-{player.name}!
+Hi,
+{player}!
 ```
 
 ### Dialogue
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String)
+signal dialogue_started(who: String, dialogue: String)
 ```
 
 ```
-"Hello, {player.name}!"
+Player: Hello!
 
-player: "Hi!"
+Developer: Hi,
+{player}!
 ```
 
 ### Choice
@@ -103,12 +104,12 @@ func handle_choice(choice: String):
 ```
 
 ```
-* "I have no choice.":
+- I have no choice.
 ...
 
-* "No thanks.":
+- No thanks.
     ...
-* "Buy it!" when money >= 10000:
+- Buy it! ?: money >= 10000
     ...
 ...
 ```
@@ -121,7 +122,7 @@ func handle_input(text: String, escape: bool = true):
 ```
 
 ```
-player.name = ? "What's your name?"
+player.name ?? What's your name?
 ```
 
 ### Call

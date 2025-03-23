@@ -18,12 +18,12 @@ const Regex := {
 	INDENT = "^{INDENT}+",
 	COMMENT = "^{INDENT}*{COMMENT}$",
 	TEXT = "^{INDENT}*.+$",
-	DIALOGUE = "^{INDENT}*({NAME}: )?{STRING}$",
-	CHOICE = "^{INDENT}*\\* {STR}( when {EXPRESSION})?:$",
+	DIALOGUE = "^{INDENT}*{NAME}: {EXPRESSION}$",
+	CHOICE = "^{INDENT}*- {EXPR}( \\?: {EXPRESSION})?$",
 	JUMP = "^{INDENT}*{GOTO} {WHERE}$",
 	LABEL = "^{INDENT}*@{NAME}$",
 	RETURN = "^{INDENT}*<-$",
-	INPUT = "^{INDENT}*{VARIABLE} = \\? {STRING}$",
+	INPUT = "^{INDENT}*{VARIABLE} \\?\\? {EXPRESSION}$",
 	ASSIGN = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
 	CALL = "^{INDENT}*{NAME}\\(.*\\)$",
@@ -33,12 +33,11 @@ const Capture := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
 	NAME = "(?<name>[A-Za-z]\\w*)",  # \w = [A-Za-z0-9_]
-	STR = '"(?<string>.+?)"',
-	STRING = '"(?<string>.+)"',
 	GOTO = "(?<goto><>|->)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
 	VARIABLE = "((?<section>[A-Za-z]\\w*)\\.)?(?<key>[A-Za-z_]\\w*)",
 	ASSIGNMENT = "(?<assignment>=|\\?=|\\+=|-=|\\*=|/=)",
+	EXPR = "(?<expr>.+?)",
 	EXPRESSION = "(?<expression>.+)",
 	BRANCH = "(?<branch>if|elif|else)",
 }
@@ -118,8 +117,8 @@ static func match_indent(line: String) -> int:
 
 func is_multiline(line: String) -> bool:
 	match type:
-		TEXT:
-			return match_type(line) == type and match_indent(line) == indent
+		DIALOGUE, TEXT:
+			return match_indent(line) == indent and match_type(line) == TEXT
 		_:
 			return false
 

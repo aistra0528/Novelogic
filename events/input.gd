@@ -12,10 +12,10 @@ func process():
 	if result:
 		section = result.get_string("section")
 		key = result.get_string("key")
-		prompt = result.get_string("string")
+		prompt = result.get_string("expression")
 
 	processed = true
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, ' Input: "', prompt, '"')
+	return str("L", start_line + 1, " Input: ", prompt)
