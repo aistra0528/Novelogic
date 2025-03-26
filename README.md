@@ -123,7 +123,7 @@ Player.name ?? What's your name?
 
 ### Call
 ```gdscript
-class_name MyExtension extends ExprExtension
+class_name MyExtension extends NovelogicExtension
 ...
 func do_something(...):
     ...

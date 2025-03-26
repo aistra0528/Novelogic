@@ -1,4 +1,4 @@
-class_name ExprExtension extends RandomNumberGenerator
+class_name NovelogicExtension extends RandomNumberGenerator
 
 var _decks := {}
 var _last_cards := {}

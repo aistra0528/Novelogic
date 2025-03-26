@@ -18,7 +18,7 @@ var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
 var slot := -1
-var extension := ExprExtension.new()
+var extension := NovelogicExtension.new()
 
 
 func load_timeline(path: String) -> NovelogicTimeline:
