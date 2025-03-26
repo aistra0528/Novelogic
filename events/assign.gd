@@ -20,8 +20,8 @@ func process():
 
 
 func execute():
-	var result := Novelogic.ext.execute_expression(expression, start_line)
-	if Novelogic.ext.execute_error != OK:
+	var result := Novelogic.extension.execute_expression(expression, start_line)
+	if Novelogic.extension.execute_error != OK:
 		return
 	if section.is_empty():
 		match assignment:

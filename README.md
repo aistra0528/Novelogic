@@ -131,9 +131,11 @@ func do_something(...):
 
 ```gdscript
 func _ready():
-    Novelogic.ext = MyExtension.new()
+    Novelogic.extension = MyExtension.new()
 ```
 
 ```
 do_something(...)
+
+Autoload.do_something(...)
 ```

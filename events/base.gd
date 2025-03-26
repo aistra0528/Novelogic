@@ -26,7 +26,7 @@ const Regex := {
 	INPUT = "^{INDENT}*{VARIABLE} \\?\\? {EXPRESSION}$",
 	ASSIGN = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
-	CALL = "^{INDENT}*{NAME}\\(.*\\)$",
+	CALL = "^{INDENT}*{VARIABLE}\\(.*\\)$",
 }
 
 const Capture := {

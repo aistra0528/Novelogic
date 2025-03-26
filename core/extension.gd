@@ -33,7 +33,7 @@ func draw(deck: Array) -> Variant:
 	return _decks[hash].pop_front()
 
 
-func execute_expression(expression: String, line: int) -> Variant:
+func execute_expression(expression: String, line: int, instance: Object = self) -> Variant:
 	execute_error = FAILED
 
 	var keys := Novelogic.variables.keys()
@@ -48,7 +48,7 @@ func execute_expression(expression: String, line: int) -> Variant:
 	if expr.parse(str, keys + Novelogic.timeline_variables.keys()) != OK:
 		push_error("L", line + 1, " Bad expression: ", expression)
 		return
-	var result := expr.execute(Novelogic.variables.values() + Novelogic.timeline_variables.values(), self)
+	var result := expr.execute(Novelogic.variables.values() + Novelogic.timeline_variables.values(), instance)
 	if expr.has_execute_failed():
 		push_error("L", line + 1, " Execute failed: ", expression)
 		return

@@ -18,7 +18,7 @@ var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
 var slot := -1
-var ext := ExprExtension.new()
+var extension := ExprExtension.new()
 
 
 func load_timeline(path: String) -> NovelogicTimeline:
@@ -30,7 +30,7 @@ func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
 	timeline_started.emit()
 	current_index = 0
 	current_indent = 0
-	ext.clear()
+	extension.clear()
 	if not is_same(current_index, index_or_label):
 		if typeof(index_or_label) == TYPE_STRING:
 			handle_jump(index_or_label)
