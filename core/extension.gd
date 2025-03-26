@@ -15,11 +15,7 @@ func clear():
 
 
 func d(to: int) -> int:
-	return dice(0, to)
-
-
-func dice(from: int, to: int) -> int:
-	return randi_range(from, to)
+	return randi_range(1, to)
 
 
 func draw(deck: Array) -> Variant:

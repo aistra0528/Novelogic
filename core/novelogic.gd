@@ -119,22 +119,16 @@ func handle_event(index: int, ignore_indent: bool = false):
 					timeline.variables = timeline_variables
 				start_timeline(timeline, event.label)
 		TimelineEvent.LABEL:
-			current_indent += 1
 			handle_next_event()
 		TimelineEvent.RETURN:
-			if current_timeline.trace.is_empty():
-				current_indent = 0
-				handle_next_event()
-			else:
+			if not current_timeline.trace.is_empty():
 				index = current_timeline.trace.pop_back()
 				var event := current_timeline.events[index] as TimelineJump
 				if event and event.require_trace():
 					current_indent = event.indent
 					handle_event(index + 1)
-				else:
-					current_timeline.trace.clear()
-					current_indent = 0
-					handle_next_event()
+					return
+			end_timeline()
 		TimelineEvent.INPUT:
 			input_started.emit((current_event as TimelineInput).prompt)
 		TimelineEvent.ASSIGN:
