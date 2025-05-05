@@ -181,31 +181,21 @@ func save_slot(index: int = 0) -> bool:
 	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.WRITE)
 	if not save:
 		return false
-	save.store_string(JSON.stringify(data, "\t"))
+	save.store_var(data)
 	return true
 
 
 func load_slot() -> bool:
-	var save := FileAccess.get_file_as_string("user://saves/slot_%02d" % slot)
-	if save.is_empty():
+	var save := FileAccess.open("user://saves/slot_%02d" % slot, FileAccess.READ)
+	if not save:
 		return false
-	var json := JSON.new()
-	if json.parse(save) != OK:
-		return false
-	variables = json.data["variables"]
-	for key in variables.keys():
-		if variables[key] is float and str(variables[key]).is_valid_int():
-			variables[key] = variables[key] as int
-	var path: String = json.data["timeline_path"]
+	var savedata := save.get_var()
+	variables = savedata["variables"]
+	var path: String = savedata["timeline_path"]
 	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
-	timeline.trace.clear()
-	for i in json.data["timeline_trace"]:
-		timeline.trace.append(i as int)
-	timeline.variables = json.data["timeline_variables"]
-	for key in timeline.variables.keys():
-		if timeline.variables[key] is float and str(timeline.variables[key]).is_valid_int():
-			timeline.variables[key] = timeline.variables[key] as int
-	start_timeline(timeline, json.data["timeline_index"] as int)
+	timeline.trace = savedata["timeline_trace"]
+	timeline.variables = savedata["timeline_variables"]
+	start_timeline(timeline, savedata["timeline_index"])
 	return true
 
 
