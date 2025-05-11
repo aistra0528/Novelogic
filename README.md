@@ -78,7 +78,7 @@ hp -= 3 * d(12) + 6
 game_over = hp <= 0
 log = "HP: {hp}/{hp_max}"
 
-# Global variables
+# Autoload properties
 Player.name = "You"
 Count.game_over += 1
 Flag.hard_mode = true
@@ -126,6 +126,7 @@ Player.name ?? What's your name?
 class_name MyExtension extends NovelogicExtension
 ...
 func do_something(...):
+    # (Novelogic.current_event as TimelineCall).handle_next = false
     ...
 ```
 

@@ -20,8 +20,8 @@ func process():
 
 
 func execute():
-	var result := Novelogic.extension.execute_expression(expression, start_line)
-	if Novelogic.extension.execute_error != OK:
+	var result := Novelogic.execute_expression(expression, start_line)
+	if Novelogic.execute_error != OK:
 		return
 	if section.is_empty():
 		match assignment:
@@ -39,20 +39,22 @@ func execute():
 			"/=":
 				Novelogic.timeline_variables[key] /= result
 	else:
+		var value := Novelogic.extension.get_autoload(section).get(key)
 		match assignment:
 			"=":
-				Novelogic.variables[section + "." + key] = result
+				value = result
 			"?=":
-				if not Novelogic.variables.has(section + "." + key):
-					Novelogic.variables[section + "." + key] = result
+				if not value:
+					value = result
 			"+=":
-				Novelogic.variables[section + "." + key] += result
+				value += result
 			"-=":
-				Novelogic.variables[section + "." + key] -= result
+				value -= result
 			"*=":
-				Novelogic.variables[section + "." + key] *= result
+				value *= result
 			"/=":
-				Novelogic.variables[section + "." + key] /= result
+				value /= result
+		Novelogic.extension.get_autoload(section).set(key, value)
 	Novelogic.handle_next_event()
 
 

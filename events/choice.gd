@@ -40,7 +40,7 @@ func available_choices() -> PackedStringArray:
 	var available_choices := PackedStringArray()
 	for i in choices:
 		var event: TimelineChoice = Novelogic.current_timeline.events[i]
-		if event.expression.is_empty() or is_same(Novelogic.extension.execute_expression(event.expression, event.start_line), true):
+		if event.expression.is_empty() or is_same(Novelogic.execute_expression(event.expression, event.start_line), true):
 			available_choices.append(event.choice)
 	return available_choices
 

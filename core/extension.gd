@@ -2,7 +2,6 @@ class_name NovelogicExtension extends RandomNumberGenerator
 
 var _decks := {}
 var _last_cards := {}
-var execute_error := FAILED
 
 
 func _init():
@@ -33,25 +32,5 @@ func draw(deck: Array) -> Variant:
 	return _decks[hash].pop_front()
 
 
-func execute_expression(expression: String, line: int, instance: Object = self) -> Variant:
-	execute_error = FAILED
-
-	var keys := Novelogic.variables.keys()
-	var str := expression
-	for i in keys.size():
-		var key: String = keys[i]
-		keys[i] = key.replace(".", "__")
-		if key in str:
-			str = str.replace(key, keys[i])
-
-	var expr := Expression.new()
-	if expr.parse(str, keys + Novelogic.timeline_variables.keys()) != OK:
-		push_error("L", line + 1, " Bad expression: ", expression)
-		return
-	var result := expr.execute(Novelogic.variables.values() + Novelogic.timeline_variables.values(), instance)
-	if expr.has_execute_failed():
-		push_error("L", line + 1, " Execute failed: ", expression)
-		return
-
-	execute_error = OK
-	return result
+func get_autoload(name: String) -> Node:
+	return Novelogic.get_node("/root/%s" % name)

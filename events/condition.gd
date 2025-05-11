@@ -24,8 +24,8 @@ func is_if_branch() -> bool:
 func execute():
 	var handled := branch == "else"
 	if branch != "else" and not expression.is_empty():
-		var result := Novelogic.extension.execute_expression(expression, start_line)
-		if Novelogic.extension.execute_error == OK and result is bool:
+		var result := Novelogic.execute_expression(expression, start_line)
+		if Novelogic.execute_error == OK and result is bool:
 			handled = result
 
 	if handled:

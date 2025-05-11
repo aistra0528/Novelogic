@@ -13,12 +13,12 @@ var current_indent := 0
 var current_event: TimelineEvent:
 	get:
 		return current_timeline.events[current_index] if current_timeline else null
-var variables := {}
 var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
-var slot := -1
+var execute_error := FAILED
 var extension := NovelogicExtension.new()
+var slot := -1
 
 
 func load_timeline(path: String) -> NovelogicTimeline:
@@ -166,13 +166,32 @@ func handle_input(text: String, escape: bool = true):
 	if event.section.is_empty():
 		timeline_variables[event.key] = text
 	else:
-		variables[event.section + "." + event.key] = text
+		extension.get_autoload(event.section).set(event.key, text)
 	handle_next_event()
 
 
 func end_timeline():
 	current_timeline = null
 	timeline_ended.emit()
+
+
+func execute_expression(expression: String, line: int) -> Variant:
+	execute_error = FAILED
+
+	for name in get_tree().root.get_children().map(func(node: Node): return node.name):
+		expression = expression.replace(name, 'get_autoload("%s")' % name)
+
+	var expr := Expression.new()
+	if expr.parse(expression, timeline_variables.keys()) != OK:
+		push_error("L", line + 1, " Bad expression: ", expression)
+		return
+	var result := expr.execute(timeline_variables.values(), extension)
+	if expr.has_execute_failed():
+		push_error("L", line + 1, " Execute failed: ", expression)
+		return
+
+	execute_error = OK
+	return result
 
 
 func save_slot(index: int = 0) -> bool:
@@ -190,7 +209,6 @@ func load_slot() -> bool:
 	if not save:
 		return false
 	var savedata := save.get_var()
-	variables = savedata["variables"]
 	var path: String = savedata["timeline_path"]
 	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
 	timeline.trace = savedata["timeline_trace"]
@@ -209,7 +227,6 @@ func has_slot() -> bool:
 var data: Dictionary:
 	get:
 		return {
-			"variables": variables,
 			"timeline_path": current_timeline.path if current_timeline else "",
 			"timeline_trace": current_timeline.trace if current_timeline else [],
 			"timeline_variables": timeline_variables,
