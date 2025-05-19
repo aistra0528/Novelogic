@@ -8,7 +8,7 @@ func process():
 	for i in lines.size():
 		if i == 0:
 			var reg := RegEx.new()
-			reg.compile(Regex.DIALOGUE.format(Capture))
+			reg.compile(REGEX.DIALOGUE.format(CAPTURE))
 			var result := reg.search(lines[i])
 			if result:
 				who = result.get_string("name")

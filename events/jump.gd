@@ -7,7 +7,7 @@ var trace := false
 
 func process():
 	var reg := RegEx.new()
-	reg.compile(Regex.JUMP.format(Capture))
+	reg.compile(REGEX.JUMP.format(CAPTURE))
 	var result := reg.search(lines[0])
 	if result:
 		timeline = result.get_string("timeline")

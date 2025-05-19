@@ -8,7 +8,7 @@ var choices := PackedInt32Array()
 
 func process():
 	var reg := RegEx.new()
-	reg.compile(Regex.CHOICE.format(Capture))
+	reg.compile(REGEX.CHOICE.format(CAPTURE))
 	var result := reg.search(lines[0])
 	if result:
 		choice = result.get_string("expr")

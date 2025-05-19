@@ -6,7 +6,7 @@ var expression := ""
 
 func process():
 	var reg := RegEx.new()
-	reg.compile(Regex.CONDITION.format(Capture))
+	reg.compile(REGEX.CONDITION.format(CAPTURE))
 	var result := reg.search(lines[0])
 	if result:
 		branch = result.get_string("branch")

@@ -218,7 +218,7 @@ func load_slot() -> bool:
 
 
 func has_slot() -> bool:
-	for i in range(21):
+	for i in 21:
 		if FileAccess.file_exists("user://saves/slot_%02d" % i):
 			return true
 	return false

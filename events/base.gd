@@ -14,7 +14,7 @@ enum {
 	CALL,
 }
 
-const Regex := {
+const REGEX := {
 	INDENT = "^{INDENT}+",
 	COMMENT = "^{INDENT}*{COMMENT}$",
 	TEXT = "^{INDENT}*.+$",
@@ -29,7 +29,7 @@ const Regex := {
 	CALL = "^{INDENT}*{VARIABLE}\\(.*\\)$",
 }
 
-const Capture := {
+const CAPTURE := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
 	NAME = "(?<name>[A-Za-z]\\w*)",  # \w = [A-Za-z0-9_]
@@ -82,25 +82,25 @@ static func create(line: String) -> TimelineEvent:
 
 static func match_type(line: String) -> int:
 	var reg := RegEx.new()
-	if line.is_empty() or reg.compile(Regex.COMMENT.format(Capture)) == OK and reg.search(line):
+	if line.is_empty() or reg.compile(REGEX.COMMENT.format(CAPTURE)) == OK and reg.search(line):
 		return COMMENT
-	elif reg.compile(Regex.DIALOGUE.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.DIALOGUE.format(CAPTURE)) == OK and reg.search(line):
 		return DIALOGUE
-	elif reg.compile(Regex.CHOICE.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.CHOICE.format(CAPTURE)) == OK and reg.search(line):
 		return CHOICE
-	elif reg.compile(Regex.JUMP.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.JUMP.format(CAPTURE)) == OK and reg.search(line):
 		return JUMP
-	elif reg.compile(Regex.LABEL.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.LABEL.format(CAPTURE)) == OK and reg.search(line):
 		return LABEL
-	elif reg.compile(Regex.RETURN.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.RETURN.format(CAPTURE)) == OK and reg.search(line):
 		return RETURN
-	elif reg.compile(Regex.INPUT.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.INPUT.format(CAPTURE)) == OK and reg.search(line):
 		return INPUT
-	elif reg.compile(Regex.ASSIGN.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.ASSIGN.format(CAPTURE)) == OK and reg.search(line):
 		return ASSIGN
-	elif reg.compile(Regex.CONDITION.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.CONDITION.format(CAPTURE)) == OK and reg.search(line):
 		return CONDITION
-	elif reg.compile(Regex.CALL.format(Capture)) == OK and reg.search(line):
+	elif reg.compile(REGEX.CALL.format(CAPTURE)) == OK and reg.search(line):
 		return CALL
 	else:
 		return TEXT
@@ -108,7 +108,7 @@ static func match_type(line: String) -> int:
 
 static func match_indent(line: String) -> int:
 	var reg := RegEx.new()
-	reg.compile(Regex.INDENT.format(Capture))
+	reg.compile(REGEX.INDENT.format(CAPTURE))
 	var result := reg.search(line)
 	if not result:
 		return 0
