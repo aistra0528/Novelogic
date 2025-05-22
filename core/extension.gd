@@ -3,6 +3,13 @@ class_name NovelogicExtension extends RandomNumberGenerator
 var _decks := {}
 var _last_cards := {}
 
+var data: Dictionary:
+	get:
+		return {
+			"_decks": _decks,
+			"_last_cards": _last_cards,
+		}
+
 
 func _init():
 	randomize()
@@ -11,6 +18,23 @@ func _init():
 func clear():
 	_decks.clear()
 	_last_cards.clear()
+
+
+func load_data(savedata: Dictionary):
+	_decks = savedata["_decks"]
+	_last_cards = savedata["_last_cards"]
+
+
+func has_var(key: Variant) -> bool:
+	return Novelogic.timeline_variables.has(key)
+
+
+func get_var(key: Variant, default: Variant = null) -> Variant:
+	return Novelogic.timeline_variables.get(key, default)
+
+
+func set_var(key: Variant, value: Variant) -> bool:
+	return Novelogic.timeline_variables.set(key, value)
 
 
 func d(to: int) -> int:
@@ -30,6 +54,10 @@ func draw(deck: Array) -> Variant:
 		_decks[hash] = deck
 		_last_cards[hash] = deck.back()
 	return _decks[hash].pop_front()
+
+
+func drawi(n: int) -> int:
+	return draw(range(n))
 
 
 func get_autoload(name: String) -> Node:

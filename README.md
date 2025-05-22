@@ -114,11 +114,13 @@ func handle_choice(choice: String):
 ```gdscript
 signal input_started(prompt: String)
 ...
-func handle_input(text: String, escape: bool = true):
+func handle_input(input: Variant):
 ```
 
 ```
-Player.name ?? What's your name?
+answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+
+Player.birthday ?? res://date_picker.tscn
 ```
 
 ### Call

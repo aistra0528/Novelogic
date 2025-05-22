@@ -18,7 +18,17 @@ var timeline_variables: Dictionary:
 		return current_timeline.variables if current_timeline else {}
 var execute_error := FAILED
 var extension := NovelogicExtension.new()
-var slot := -1
+var slot := 0
+
+var data: Dictionary:
+	get:
+		return {
+			"timeline_path": current_timeline.path if current_timeline else "",
+			"timeline_trace": current_timeline.trace if current_timeline else [],
+			"timeline_variables": timeline_variables,
+			"timeline_index": current_index if current_timeline else 0,
+			"extension_data": extension.data,
+		}
 
 
 func load_timeline(path: String) -> NovelogicTimeline:
@@ -157,16 +167,14 @@ func handle_jump(label: String):
 	text_started.emit("Label not found: @" + label)
 
 
-func handle_input(text: String, escape: bool = true):
+func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	if escape:
-		text = text.replace("[", "[lb]")
 	if event.section.is_empty():
-		timeline_variables[event.key] = text
+		timeline_variables[event.key] = input
 	else:
-		extension.get_autoload(event.section).set(event.key, text)
+		extension.get_autoload(event.section).set(event.key, input)
 	handle_next_event()
 
 
@@ -194,42 +202,31 @@ func execute_expression(expression: String, line: int) -> Variant:
 	return result
 
 
-func save_slot(index: int = 0) -> bool:
+func save_slot(index: int = slot) -> bool:
 	if not DirAccess.dir_exists_absolute("user://saves"):
 		DirAccess.make_dir_recursive_absolute("user://saves")
 	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.WRITE)
 	if not save:
 		return false
 	save.store_var(data)
+	slot = index
 	return true
 
 
-func load_slot() -> bool:
-	var save := FileAccess.open("user://saves/slot_%02d" % slot, FileAccess.READ)
+func load_slot(index: int = slot) -> bool:
+	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.READ)
 	if not save:
 		return false
 	var savedata := save.get_var()
+	extension.load_data(savedata["extension_data"])
 	var path: String = savedata["timeline_path"]
 	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
 	timeline.trace = savedata["timeline_trace"]
 	timeline.variables = savedata["timeline_variables"]
 	start_timeline(timeline, savedata["timeline_index"])
+	slot = index
 	return true
 
 
-func has_slot() -> bool:
-	for i in 21:
-		if FileAccess.file_exists("user://saves/slot_%02d" % i):
-			return true
-	return false
-
-
-var data: Dictionary:
-	get:
-		return {
-			"timeline_path": current_timeline.path if current_timeline else "",
-			"timeline_trace": current_timeline.trace if current_timeline else [],
-			"timeline_variables": timeline_variables,
-			"timeline_index": current_index if current_timeline else 0,
-			"timeline_event": str(current_event)
-		}
+func has_slot(index: int = slot) -> bool:
+	return FileAccess.file_exists("user://saves/slot_%02d" % index)
