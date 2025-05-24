@@ -9,10 +9,10 @@ Enable Novelogic in Project Settings > Plugins.
 
 ```gdscript
 func _ready():
-    ... # Novelogic.signal_name.connect(...)
+    # Novelogic.signal_name.connect(...)
     var timeline = Novelogic.load_timeline("/path/to/file")
     Novelogic.start_timeline(timeline)
-...
+
 func _on_button_pressed():
     Novelogic.handle_next_event()
 ```
@@ -54,7 +54,6 @@ Npc: Hi,
 -> label_jump
 
 @label_call
-...
 # Return where label called, or end the timeline.
 <-
 
@@ -127,6 +126,12 @@ Player.birthday ?? res://date_picker.tscn
 ```gdscript
 class_name MyExtension extends NovelogicExtension
 ...
+func get_section() -> Dictionary:
+    return {
+        # Autoload.name: Autoload,
+        ...
+    }
+
 func do_something(...):
     # (Novelogic.current_event as TimelineCall).handle_next = false
     ...

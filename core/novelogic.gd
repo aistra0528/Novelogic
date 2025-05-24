@@ -27,7 +27,7 @@ var data: Dictionary:
 			"timeline_trace": current_timeline.trace if current_timeline else [],
 			"timeline_variables": timeline_variables,
 			"timeline_index": current_index if current_timeline else 0,
-			"extension_data": extension.data,
+			"extension_data": extension.get_data(),
 		}
 
 
@@ -174,7 +174,7 @@ func handle_input(input: Variant):
 	if event.section.is_empty():
 		timeline_variables[event.key] = input
 	else:
-		extension.get_autoload(event.section).set(event.key, input)
+		extension.get_section()[event.section].set(event.key, input)
 	handle_next_event()
 
 
@@ -186,8 +186,8 @@ func end_timeline():
 func execute_expression(expression: String, line: int) -> Variant:
 	execute_error = FAILED
 
-	for name in get_tree().root.get_children().map(func(node: Node): return node.name):
-		expression = expression.replace(name, 'get_autoload("%s")' % name)
+	for key in extension.get_section().keys():
+		expression = expression.replace("%s." % key, 'get_section()["%s"].' % key)
 
 	var expr := Expression.new()
 	if expr.parse(expression, timeline_variables.keys()) != OK:

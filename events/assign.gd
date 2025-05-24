@@ -39,7 +39,7 @@ func execute():
 			"/=":
 				Novelogic.timeline_variables[key] /= result
 	else:
-		var value := Novelogic.extension.get_autoload(section).get(key)
+		var value: Variant = Novelogic.extension.get_section()[section].get(key)
 		match assignment:
 			"=":
 				value = result
@@ -54,7 +54,7 @@ func execute():
 				value *= result
 			"/=":
 				value /= result
-		Novelogic.extension.get_autoload(section).set(key, value)
+		Novelogic.extension.get_section()[section].set(key, value)
 	Novelogic.handle_next_event()
 
 
