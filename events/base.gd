@@ -43,7 +43,10 @@ const CAPTURE := {
 }
 
 var type := TEXT
-var start_line := 0
+var start_line := 1
+var end_line: int:
+	get:
+		return start_line + lines.size() - 1
 var indent := 0
 var lines := PackedStringArray()
 var processed := false
@@ -124,9 +127,4 @@ func is_multiline(line: String) -> bool:
 
 
 func process():
-	push_error("Unimplemented event type: ", "L", start_line + 1, "-", line_range()[-1] + 1)
 	processed = true
-
-
-func line_range() -> Array:
-	return range(start_line, start_line + lines.size())

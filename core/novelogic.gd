@@ -16,17 +16,18 @@ var current_event: TimelineEvent:
 var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
-var execute_error := FAILED
+var error := OK
 var extension := NovelogicExtension.new()
 var slot := 0
 
 var data: Dictionary:
 	get:
 		return {
-			"timeline_path": current_timeline.path if current_timeline else "",
-			"timeline_trace": current_timeline.trace if current_timeline else [],
+			"timeline_path": current_timeline.path,
+			"timeline_stack": current_timeline.stack,
 			"timeline_variables": timeline_variables,
-			"timeline_index": current_index if current_timeline else 0,
+			"event_index": current_index,
+			"event_lines": current_event.lines,
 			"extension_data": extension.get_data(),
 		}
 
@@ -36,16 +37,18 @@ func load_timeline(path: String) -> NovelogicTimeline:
 
 
 func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
+	if not timeline:
+		return
 	current_timeline = timeline
 	timeline_started.emit()
 	current_index = 0
 	current_indent = 0
 	extension.clear()
 	if not is_same(current_index, index_or_label):
-		if typeof(index_or_label) == TYPE_STRING:
+		if index_or_label is String:
 			handle_jump(index_or_label)
 			return
-		elif typeof(index_or_label) == TYPE_INT and index_or_label < timeline.events.size():
+		elif index_or_label is int and index_or_label < timeline.events.size():
 			handle_event(index_or_label, true)
 			return
 
@@ -111,9 +114,9 @@ func handle_event(index: int, ignore_indent: bool = false):
 			var event := current_event as TimelineJump
 			if event.timeline.is_empty():
 				if event.trace:
-					current_timeline.trace.append(current_index)
-				elif not current_timeline.trace.is_empty():
-					current_timeline.trace.clear()
+					current_timeline.stack.append(current_index)
+				elif not current_timeline.stack.is_empty():
+					current_timeline.stack.clear()
 				handle_jump(event.label)
 			else:
 				var path := current_timeline.path
@@ -122,7 +125,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 				else:
 					path = path.get_base_dir() + "/" + event.timeline + "." + path.get_extension()
 				var timeline := load_timeline(path)
-				if timeline.path.is_empty():
+				if not timeline:
 					text_started.emit("Timeline not found: " + path)
 					return
 				if event.trace:
@@ -131,14 +134,15 @@ func handle_event(index: int, ignore_indent: bool = false):
 		TimelineEvent.LABEL:
 			handle_next_event()
 		TimelineEvent.RETURN:
-			if not current_timeline.trace.is_empty():
-				index = current_timeline.trace.pop_back()
-				var event := current_timeline.events[index] as TimelineJump
-				if event and event.require_trace():
-					current_indent = event.indent
-					handle_event(index + 1)
-					return
-			end_timeline()
+			if current_timeline.stack.is_empty():
+				end_timeline()
+				return
+			index = current_timeline.stack[-1]
+			current_timeline.stack.resize(current_timeline.stack.size() - 1)
+			var event := current_timeline.events[index] as TimelineJump
+			if event and event.require_trace():
+				current_indent = event.indent
+				handle_event(index + 1)
 		TimelineEvent.INPUT:
 			input_started.emit((current_event as TimelineInput).prompt)
 		TimelineEvent.ASSIGN:
@@ -164,7 +168,7 @@ func handle_jump(label: String):
 		if current_timeline.events[i] is TimelineLabel and label == (current_timeline.events[i] as TimelineLabel).require_label():
 			handle_event(i, true)
 			return
-	text_started.emit("Label not found: @" + label)
+	text_started.emit("Label not found: " + current_timeline.path + "@" + label)
 
 
 func handle_input(input: Variant):
@@ -184,48 +188,56 @@ func end_timeline():
 
 
 func execute_expression(expression: String, line: int) -> Variant:
-	execute_error = FAILED
-
-	for key in extension.get_section().keys():
-		expression = expression.replace("%s." % key, 'get_section()["%s"].' % key)
-
 	var expr := Expression.new()
-	if expr.parse(expression, timeline_variables.keys()) != OK:
-		push_error("L", line + 1, " Bad expression: ", expression)
+	error = expr.parse(expression, timeline_variables.keys() + extension.get_section().keys())
+	if error:
+		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Bad expression")
 		return
-	var result := expr.execute(timeline_variables.values(), extension)
+	var result := expr.execute(timeline_variables.values() + extension.get_section().values(), extension)
 	if expr.has_execute_failed():
-		push_error("L", line + 1, " Execute failed: ", expression)
+		error = FAILED
+		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")
 		return
-
-	execute_error = OK
 	return result
 
 
-func save_slot(index: int = slot) -> bool:
+func save_slot(index: int = slot, human_readable: bool = true, full_objects: bool = false) -> bool:
+	if current_event is not TimelineText and current_event is not TimelineDialogue:
+		return false
 	if not DirAccess.dir_exists_absolute("user://saves"):
 		DirAccess.make_dir_recursive_absolute("user://saves")
 	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.WRITE)
 	if not save:
 		return false
-	save.store_var(data)
+	if human_readable:
+		save.store_string(JSON.stringify(JSON.from_native(data, full_objects)))
+	else:
+		save.store_var(data, full_objects)
 	slot = index
 	return true
 
 
-func load_slot(index: int = slot) -> bool:
-	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.READ)
-	if not save:
+func load_slot(index: int = slot, human_readable: bool = true, allow_objects: bool = false) -> bool:
+	var sav := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.READ)
+	if not sav:
 		return false
-	var savedata := save.get_var()
-	extension.load_data(savedata["extension_data"])
-	var path: String = savedata["timeline_path"]
+	var save := JSON.to_native(JSON.parse_string(sav.get_as_text()), allow_objects) if human_readable else sav.get_var(allow_objects)
+	var path: String = save["timeline_path"]
 	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
-	timeline.trace = savedata["timeline_trace"]
-	timeline.variables = savedata["timeline_variables"]
-	start_timeline(timeline, savedata["timeline_index"])
-	slot = index
-	return true
+	var idx: int = save["event_index"]
+	var lines: PackedStringArray = save["event_lines"]
+	for i in range(idx, timeline.events.size()) + range(idx):
+		if timeline.events[i].lines != lines:
+			continue
+		timeline.stack = save["timeline_stack"]
+		if i != idx and not timeline.stack.is_empty():
+			break
+		timeline.variables = save["timeline_variables"]
+		extension.load_data(save["extension_data"])
+		slot = index
+		start_timeline(timeline, i)
+		return true
+	return false
 
 
 func has_slot(index: int = slot) -> bool:

@@ -20,4 +20,4 @@ func require_label() -> String:
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, " Label: @", label)
+	return str("L", start_line, " Label: @", label)

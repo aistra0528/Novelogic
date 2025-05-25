@@ -21,7 +21,7 @@ func process():
 
 func execute():
 	var result := Novelogic.execute_expression(expression, start_line)
-	if Novelogic.execute_error != OK:
+	if Novelogic.error:
 		return
 	if section.is_empty():
 		match assignment:
@@ -60,5 +60,5 @@ func execute():
 
 func _to_string() -> String:
 	if section.is_empty():
-		return str("L", start_line + 1, " Assign: ", key, " ", assignment, " ", expression)
-	return str("L", start_line + 1, " Assign: ", section, ".", key, " ", assignment, " ", expression)
+		return str("L", start_line, " Assign: ", key, " ", assignment, " ", expression)
+	return str("L", start_line, " Assign: ", section, ".", key, " ", assignment, " ", expression)

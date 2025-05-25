@@ -47,5 +47,5 @@ func available_choices() -> PackedStringArray:
 
 func _to_string() -> String:
 	if expression.is_empty():
-		return str("L", start_line + 1, " Choices: ", choice)
-	return str("L", start_line + 1, " Choices: ", choice, " when ", expression)
+		return str("L", start_line, " Choices: ", choice)
+	return str("L", start_line, " Choices: ", choice, " when ", expression)

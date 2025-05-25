@@ -2,15 +2,14 @@ class_name NovelogicTimeline extends RefCounted
 
 var path := ""
 var events: Array[TimelineEvent] = []
-var trace: Array[int] = []
+var stack: PackedInt32Array = []
 var variables := {}
 
 
 static func from_file(path: String) -> NovelogicTimeline:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
-		push_warning("Can not access file: ", path)
-		return NovelogicTimeline.new()
+		return null
 
 	var lines := PackedStringArray()
 	while file.get_position() < file.get_length():
@@ -23,7 +22,7 @@ static func from_file(path: String) -> NovelogicTimeline:
 		if not event:
 			i += 1
 			continue
-		event.start_line = i
+		event.start_line = i + 1
 		event.lines.append(lines[i])
 		i += 1
 

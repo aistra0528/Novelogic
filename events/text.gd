@@ -16,4 +16,4 @@ func process():
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, "-", line_range()[-1] + 1, " Text: \n", text)
+	return str("L", start_line, "-", end_line, " Text: \n", text)

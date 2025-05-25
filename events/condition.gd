@@ -25,8 +25,9 @@ func execute():
 	var handled := branch == "else"
 	if branch != "else" and not expression.is_empty():
 		var result := Novelogic.execute_expression(expression, start_line)
-		if Novelogic.execute_error == OK and result is bool:
-			handled = result
+		if Novelogic.error or result is not bool:
+			return
+		handled = result
 
 	if handled:
 		Novelogic.current_indent += 1
@@ -35,5 +36,5 @@ func execute():
 
 func _to_string() -> String:
 	if branch == "else":
-		return str("L", start_line + 1, " Conditions: ", branch)
-	return str("L", start_line + 1, " Conditions: ", branch, " ", expression)
+		return str("L", start_line, " Conditions: ", branch)
+	return str("L", start_line, " Conditions: ", branch, " ", expression)

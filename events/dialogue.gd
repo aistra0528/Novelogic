@@ -24,4 +24,4 @@ func process():
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, "-", line_range()[-1] + 1, " Dialogue by ", who, ": ", dialogue)
+	return str("L", start_line, "-", end_line, " Dialogue by ", who, ": ", dialogue)

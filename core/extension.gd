@@ -1,11 +1,7 @@
-class_name NovelogicExtension extends RandomNumberGenerator
+class_name NovelogicExtension extends RefCounted
 
 var _decks := {}
 var _last_cards := {}
-
-
-func _init():
-	randomize()
 
 
 func clear():
@@ -48,18 +44,18 @@ func d(to: int) -> int:
 
 
 func draw(deck: Array) -> Variant:
-	var hash := deck.hash()
-	if not hash in _decks.keys():
+	var key := deck.duplicate()
+	if not key in _decks.keys():
 		deck.shuffle()
-		_decks[hash] = deck
-		_last_cards[hash] = deck.back()
-	if _decks[hash].is_empty():
+		_decks[key] = deck
+		_last_cards[key] = deck.back()
+	if _decks[key].is_empty():
 		deck.shuffle()
-		while is_same(_last_cards[hash], deck.front()):
+		while is_same(_last_cards[key], deck.front()):
 			deck.shuffle()
-		_decks[hash] = deck
-		_last_cards[hash] = deck.back()
-	return _decks[hash].pop_front()
+		_decks[key] = deck
+		_last_cards[key] = deck.back()
+	return _decks[key].pop_front()
 
 
 func drawi(n: int) -> int:

@@ -18,4 +18,4 @@ func process():
 
 
 func _to_string() -> String:
-	return str("L", start_line + 1, " Input: ", prompt)
+	return str("L", start_line, " Input: ", prompt)
