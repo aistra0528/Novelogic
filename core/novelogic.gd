@@ -43,18 +43,17 @@ func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
 	timeline_started.emit()
 	current_index = 0
 	current_indent = 0
-	if extension:
-		extension.clear()
-	else:
+	if not extension:
 		extension = NovelogicExtension.new()
 	if not is_same(current_index, index_or_label):
 		if index_or_label is String:
+			extension.clear()
 			handle_jump(index_or_label)
 			return
 		elif index_or_label is int and index_or_label < timeline.events.size():
 			handle_event(index_or_label, true)
 			return
-
+	extension.clear()
 	handle_event(current_index)
 
 
