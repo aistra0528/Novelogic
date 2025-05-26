@@ -8,6 +8,7 @@ signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String)
 
 var current_timeline: NovelogicTimeline = null
+var extension: NovelogicExtension = null
 var current_index := 0
 var current_indent := 0
 var current_event: TimelineEvent:
@@ -17,7 +18,6 @@ var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
 var error := OK
-var extension := NovelogicExtension.new()
 var slot := 0
 
 var data: Dictionary:
@@ -43,7 +43,10 @@ func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
 	timeline_started.emit()
 	current_index = 0
 	current_indent = 0
-	extension.clear()
+	if extension:
+		extension.clear()
+	else:
+		extension = NovelogicExtension.new()
 	if not is_same(current_index, index_or_label):
 		if index_or_label is String:
 			handle_jump(index_or_label)
@@ -126,7 +129,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 					path = path.get_base_dir() + "/" + event.timeline + "." + path.get_extension()
 				var timeline := load_timeline(path)
 				if not timeline:
-					text_started.emit("Timeline not found: " + path)
+					OS.alert(path, "Timeline not found")
 					return
 				if event.trace:
 					timeline.variables = timeline_variables
@@ -168,17 +171,19 @@ func handle_jump(label: String):
 		if current_timeline.events[i] is TimelineLabel and label == (current_timeline.events[i] as TimelineLabel).require_label():
 			handle_event(i, true)
 			return
-	text_started.emit("Label not found: " + current_timeline.path + "@" + label)
+	OS.alert(current_timeline.path + "@" + label, "Label not found")
 
 
 func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	if event.section.is_empty():
+	if event.section.is_empty() and not extension.get_sections().has(event.key):
 		timeline_variables[event.key] = input
+	elif event.section.is_empty():
+		extension.get_sections().set(event.key, input)
 	else:
-		extension.get_section()[event.section].set(event.key, input)
+		extension.get_sections().get(event.section).set(event.key, input)
 	handle_next_event()
 
 
@@ -189,11 +194,11 @@ func end_timeline():
 
 func execute_expression(expression: String, line: int) -> Variant:
 	var expr := Expression.new()
-	error = expr.parse(expression, timeline_variables.keys() + extension.get_section().keys())
+	error = expr.parse(expression, timeline_variables.keys() + extension.get_sections().keys())
 	if error:
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Bad expression")
 		return
-	var result := expr.execute(timeline_variables.values() + extension.get_section().values(), extension)
+	var result := expr.execute(timeline_variables.values() + extension.get_sections().values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")

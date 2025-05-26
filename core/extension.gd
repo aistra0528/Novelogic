@@ -1,5 +1,6 @@
 class_name NovelogicExtension extends RefCounted
 
+var _sections := {}
 var _decks := {}
 var _last_cards := {}
 
@@ -9,10 +10,8 @@ func clear():
 	_last_cards.clear()
 
 
-func get_section() -> Dictionary:
-	return {
-		Novelogic.name: Novelogic,
-	}
+func get_sections() -> Dictionary:
+	return _sections
 
 
 func get_data() -> Dictionary:
@@ -22,9 +21,9 @@ func get_data() -> Dictionary:
 	}
 
 
-func load_data(savedata: Dictionary):
-	_decks = savedata["_decks"]
-	_last_cards = savedata["_last_cards"]
+func load_data(data: Dictionary):
+	_decks = data["_decks"]
+	_last_cards = data["_last_cards"]
 
 
 func has_var(key: Variant) -> bool:
@@ -45,7 +44,7 @@ func d(to: int) -> int:
 
 func draw(deck: Array) -> Variant:
 	var key := deck.duplicate()
-	if not key in _decks.keys():
+	if not _decks.has(key):
 		deck.shuffle()
 		_decks[key] = deck
 		_last_cards[key] = deck.back()

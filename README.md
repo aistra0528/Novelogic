@@ -126,8 +126,8 @@ Player.birthday ?? res://date_picker.tscn
 ```gdscript
 class_name MyExtension extends NovelogicExtension
 ...
-func get_section() -> Dictionary:
-    return {
+func _init():
+    _sections = {
         # Autoload.name: Autoload,
         ...
     }
