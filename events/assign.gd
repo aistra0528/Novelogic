@@ -23,7 +23,7 @@ func execute():
 	var result := Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
-	if section.is_empty() and not Novelogic.extension.get_sections().has(key):
+	if section.is_empty() and key not in Novelogic.extension.get_sections():
 		match assignment:
 			"=":
 				Novelogic.timeline_variables[key] = result

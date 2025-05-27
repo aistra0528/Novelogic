@@ -44,7 +44,7 @@ func d(to: int) -> int:
 
 func draw(deck: Array) -> Variant:
 	var key := deck.duplicate()
-	if not _decks.has(key):
+	if key not in _decks:
 		deck.shuffle()
 		_decks[key] = deck
 		_last_cards[key] = deck.back()

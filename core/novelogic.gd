@@ -93,7 +93,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 				elif current_indent > event.indent:
 					current_indent = event.indent
 
-				if not event is TimelineCondition or (event as TimelineCondition).is_if_branch():
+				if event is not TimelineCondition or (event as TimelineCondition).is_if_branch():
 					current_index = index
 					break
 
@@ -156,7 +156,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 
 
 func handle_choice(choice: String):
-	if not current_event is TimelineChoice:
+	if current_event is not TimelineChoice:
 		return
 	for i in current_event.choices:
 		if choice == (current_timeline.events[i] as TimelineChoice).choice:
@@ -177,7 +177,7 @@ func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	if event.section.is_empty() and not extension.get_sections().has(event.key):
+	if event.section.is_empty() and event.key not in extension.get_sections():
 		timeline_variables[event.key] = input
 	elif event.section.is_empty():
 		extension.get_sections().set(event.key, input)

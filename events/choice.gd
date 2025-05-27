@@ -24,7 +24,7 @@ func process_choices():
 		var event := Novelogic.current_timeline.events[i]
 		if indent < event.indent:
 			pass
-		elif indent > event.indent or not event is TimelineChoice:
+		elif indent > event.indent or event is not TimelineChoice:
 			break
 		else:
 			event.is_first = false
