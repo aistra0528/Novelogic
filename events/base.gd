@@ -36,7 +36,7 @@ const CAPTURE := {
 	GOTO = "(?<goto><>|->)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
 	VARIABLE = "((?<section>[A-Za-z]\\w*)\\.)?(?<key>[A-Za-z_]\\w*)",
-	ASSIGNMENT = "(?<assignment>=|\\?=|\\+=|-=|\\*=|/=)",
+	ASSIGNMENT = "(?<assignment>=|\\+=|-=|\\*=|/=)",
 	EXPR = "(?<expr>.+?)",
 	EXPRESSION = "(?<expression>.+)",
 	BRANCH = "(?<branch>if|elif|else)",

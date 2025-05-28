@@ -70,17 +70,10 @@ Npc: Hi,
 ### Assignment
 ```
 # Timeline variables
-hp_max = 42
-# hp = hp_max if hp is not defined
-hp ?= hp_max
+hp = 42
 hp -= 3 * d(12) + 6
 game_over = hp <= 0
-log = "HP: {hp}/{hp_max}"
-
-# Autoload properties
-Player.name = "You"
-Count.game_over += 1
-Flag.hard_mode = true
+log = "HP: {hp}"
 ```
 
 ### Condition
@@ -126,11 +119,10 @@ Player.birthday ?? res://date_picker.tscn
 ```gdscript
 class_name MyExtension extends NovelogicExtension
 ...
-func _init():
-    _sections = {
-        # Autoload.name: Autoload,
-        ...
-    }
+func _get(property: StringName) -> Variant:
+    if property == Autoload.name:
+        return Autoload
+    return null
 
 func do_something(...):
     # (Novelogic.current_event as TimelineCall).handle_next = false

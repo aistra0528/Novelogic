@@ -177,12 +177,7 @@ func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	if event.section.is_empty() and event.key not in extension.get_sections():
-		timeline_variables[event.key] = input
-	elif event.section.is_empty():
-		extension.get_sections().set(event.key, input)
-	else:
-		extension.get_sections().get(event.section).set(event.key, input)
+	(extension.get(event.section) if not event.section.is_empty() else extension if event.key in extension else timeline_variables).set(event.key, input)
 	handle_next_event()
 
 
@@ -193,11 +188,11 @@ func end_timeline():
 
 func execute_expression(expression: String, line: int) -> Variant:
 	var expr := Expression.new()
-	error = expr.parse(expression, timeline_variables.keys() + extension.get_sections().keys())
+	error = expr.parse(expression, timeline_variables.keys())
 	if error:
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Bad expression")
 		return
-	var result := expr.execute(timeline_variables.values() + extension.get_sections().values(), extension)
+	var result := expr.execute(timeline_variables.values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")

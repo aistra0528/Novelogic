@@ -23,38 +23,20 @@ func execute():
 	var result := Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
-	if section.is_empty() and key not in Novelogic.extension.get_sections():
-		match assignment:
-			"=":
-				Novelogic.timeline_variables[key] = result
-			"?=":
-				if not Novelogic.timeline_variables.has(key):
-					Novelogic.timeline_variables[key] = result
-			"+=":
-				Novelogic.timeline_variables[key] += result
-			"-=":
-				Novelogic.timeline_variables[key] -= result
-			"*=":
-				Novelogic.timeline_variables[key] *= result
-			"/=":
-				Novelogic.timeline_variables[key] /= result
-	else:
-		var value: Variant = (Novelogic.extension.get_sections() if section.is_empty() else Novelogic.extension.get_sections().get(section)).get(key)
-		match assignment:
-			"=":
-				value = result
-			"?=":
-				if not (Novelogic.extension.get_sections() if section.is_empty() else Novelogic.extension.get_sections().get(section)).has(key):
-					value = result
-			"+=":
-				value += result
-			"-=":
-				value -= result
-			"*=":
-				value *= result
-			"/=":
-				value /= result
-		(Novelogic.extension.get_sections() if section.is_empty() else Novelogic.extension.get_sections().get(section)).set(key, value)
+	var it := (
+		Novelogic.extension.get(section) if not section.is_empty() else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
+	)
+	match assignment:
+		"=":
+			it.set(key, result)
+		"+=":
+			it.set(key, it.get(key) + result)
+		"-=":
+			it.set(key, it.get(key) - result)
+		"*=":
+			it.set(key, it.get(key) * result)
+		"/=":
+			it.set(key, it.get(key) / result)
 	Novelogic.handle_next_event()
 
 

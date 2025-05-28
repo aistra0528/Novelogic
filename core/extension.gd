@@ -1,6 +1,5 @@
 class_name NovelogicExtension extends RefCounted
 
-var _sections := {}
 var _decks := {}
 var _last_cards := {}
 
@@ -8,10 +7,6 @@ var _last_cards := {}
 func clear():
 	_decks.clear()
 	_last_cards.clear()
-
-
-func get_sections() -> Dictionary:
-	return _sections
 
 
 func get_data() -> Dictionary:
@@ -24,18 +19,6 @@ func get_data() -> Dictionary:
 func load_data(data: Dictionary):
 	_decks = data["_decks"]
 	_last_cards = data["_last_cards"]
-
-
-func has_var(key: Variant) -> bool:
-	return Novelogic.timeline_variables.has(key)
-
-
-func get_var(key: Variant, default: Variant = null) -> Variant:
-	return Novelogic.timeline_variables.get(key, default)
-
-
-func set_var(key: Variant, value: Variant) -> bool:
-	return Novelogic.timeline_variables.set(key, value)
 
 
 func d(to: int) -> int:
