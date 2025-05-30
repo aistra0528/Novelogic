@@ -13,7 +13,7 @@ func process():
 
 
 func execute():
-	Novelogic.execute_expression(expression, start_line)
+	await Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
 	if Novelogic.current_event == self and handle_next:

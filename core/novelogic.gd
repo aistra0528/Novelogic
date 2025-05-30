@@ -177,7 +177,12 @@ func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	(extension.get(event.section) if not event.section.is_empty() else extension if event.key in extension else timeline_variables).set(event.key, input)
+	var it := (
+		execute_expression(event.section, event.start_line) if not event.section.is_empty() else extension if event.key in extension else timeline_variables
+	)
+	if error:
+		return
+	it.set(event.key, input)
 	handle_next_event()
 
 
@@ -225,7 +230,7 @@ func load_slot(index: int = slot, human_readable: bool = true, allow_objects: bo
 	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
 	var idx: int = save["event_index"]
 	var lines: PackedStringArray = save["event_lines"]
-	for i in range(idx, timeline.events.size()) + range(idx):
+	for i in (range(idx, timeline.events.size()) + range(idx)) if idx < timeline.events.size() else timeline.events.size():
 		if timeline.events[i].lines != lines:
 			continue
 		timeline.stack = save["timeline_stack"]

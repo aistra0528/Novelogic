@@ -24,8 +24,12 @@ func execute():
 	if Novelogic.error:
 		return
 	var it := (
-		Novelogic.extension.get(section) if not section.is_empty() else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
+		Novelogic.execute_expression(section, start_line)
+		if not section.is_empty()
+		else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
 	)
+	if Novelogic.error:
+		return
 	match assignment:
 		"=":
 			it.set(key, result)
