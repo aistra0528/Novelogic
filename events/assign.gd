@@ -24,9 +24,7 @@ func execute():
 	if Novelogic.error:
 		return
 	var it := (
-		Novelogic.execute_expression(section, start_line)
-		if not section.is_empty()
-		else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
+		Novelogic.execute_expression(section, start_line) if section else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
 	)
 	if Novelogic.error:
 		return
@@ -45,6 +43,6 @@ func execute():
 
 
 func _to_string() -> String:
-	if section.is_empty():
-		return str("L", start_line, " Assign: ", key, " ", assignment, " ", expression)
-	return str("L", start_line, " Assign: ", section, ".", key, " ", assignment, " ", expression)
+	if section:
+		return str("L", start_line, " Assign: ", section, ".", key, " ", assignment, " ", expression)
+	return str("L", start_line, " Assign: ", key, " ", assignment, " ", expression)

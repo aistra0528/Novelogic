@@ -114,18 +114,12 @@ func handle_event(index: int, ignore_indent: bool = false):
 				handle_next_event()
 		TimelineEvent.JUMP:
 			var event := current_event as TimelineJump
-			if event.timeline.is_empty():
-				if event.trace:
-					current_timeline.stack.append(current_index)
-				elif not current_timeline.stack.is_empty():
-					current_timeline.stack.clear()
-				handle_jump(event.label)
-			else:
+			if event.timeline:
 				var path := current_timeline.path
-				if path.get_extension().is_empty():
-					path = path.get_base_dir() + "/" + event.timeline
-				else:
+				if path.get_extension():
 					path = path.get_base_dir() + "/" + event.timeline + "." + path.get_extension()
+				else:
+					path = path.get_base_dir() + "/" + event.timeline
 				var timeline := load_timeline(path)
 				if not timeline:
 					OS.alert(path, "Timeline not found")
@@ -133,6 +127,12 @@ func handle_event(index: int, ignore_indent: bool = false):
 				if event.trace:
 					timeline.variables = timeline_variables
 				start_timeline(timeline, event.label)
+			else:
+				if event.trace:
+					current_timeline.stack.append(current_index)
+				elif not current_timeline.stack.is_empty():
+					current_timeline.stack.clear()
+				handle_jump(event.label)
 		TimelineEvent.LABEL:
 			handle_next_event()
 		TimelineEvent.RETURN:
@@ -177,9 +177,7 @@ func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	var it := (
-		execute_expression(event.section, event.start_line) if not event.section.is_empty() else extension if event.key in extension else timeline_variables
-	)
+	var it := execute_expression(event.section, event.start_line) if event.section else extension if event.key in extension else timeline_variables
 	if error:
 		return
 	it.set(event.key, input)

@@ -22,14 +22,7 @@ func is_if_branch() -> bool:
 
 
 func execute():
-	var handled := branch == "else"
-	if branch != "else" and not expression.is_empty():
-		var result := Novelogic.execute_expression(expression, start_line)
-		if Novelogic.error or result is not bool:
-			return
-		handled = result
-
-	if handled:
+	if branch == "else" or expression and Novelogic.execute_expression(expression, start_line):
 		Novelogic.current_indent += 1
 	Novelogic.handle_next_event()
 
