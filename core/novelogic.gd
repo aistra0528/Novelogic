@@ -235,7 +235,7 @@ func load_slot(index: int = slot, human_readable: bool = true, allow_objects: bo
 		if i != idx and not timeline.stack.is_empty():
 			break
 		timeline.variables = save["timeline_variables"]
-		extension.load_data(save["extension_data"])
+		await extension.load_data(save["extension_data"])
 		slot = index
 		start_timeline(timeline, i)
 		return true
