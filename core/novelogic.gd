@@ -3,7 +3,7 @@ extends Node
 signal timeline_ended
 signal timeline_started
 signal text_started(text: String)
-signal dialogue_started(who: String, dialogue: String)
+signal dialogue_started(dialogue: String, who: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String)
 
@@ -105,7 +105,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 			text_started.emit((current_event as TimelineText).text)
 		TimelineEvent.DIALOGUE:
 			var event := current_event as TimelineDialogue
-			dialogue_started.emit(event.who, event.dialogue)
+			dialogue_started.emit(event.dialogue, event.who)
 		TimelineEvent.CHOICE:
 			var event := current_event as TimelineChoice
 			if event.is_first:

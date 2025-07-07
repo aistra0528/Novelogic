@@ -35,7 +35,7 @@ Hi,
 ### Dialogue
 
 ```gdscript
-signal dialogue_started(who: String, dialogue: String)
+signal dialogue_started(dialogue: String, who: String)
 ```
 
 ```
