@@ -18,18 +18,6 @@ var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
 var error := OK
-var slot := 0
-
-var data: Dictionary:
-	get:
-		return {
-			"timeline_path": current_timeline.path,
-			"timeline_stack": current_timeline.stack,
-			"timeline_variables": timeline_variables,
-			"event_index": current_index,
-			"event_lines": current_event.lines,
-			"extension_data": extension.get_data(),
-		}
 
 
 func load_timeline(path: String) -> NovelogicTimeline:
@@ -201,46 +189,3 @@ func execute_expression(expression: String, line: int) -> Variant:
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")
 		return
 	return result
-
-
-func save_slot(index: int = slot, human_readable: bool = true, full_objects: bool = false) -> bool:
-	if current_event is not TimelineText and current_event is not TimelineDialogue:
-		return false
-	if not DirAccess.dir_exists_absolute("user://saves"):
-		DirAccess.make_dir_recursive_absolute("user://saves")
-	var save := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.WRITE)
-	if not save:
-		return false
-	if human_readable:
-		save.store_string(JSON.stringify(JSON.from_native(data, full_objects)))
-	else:
-		save.store_var(data, full_objects)
-	slot = index
-	return true
-
-
-func load_slot(index: int = slot, human_readable: bool = true, allow_objects: bool = false) -> bool:
-	var sav := FileAccess.open("user://saves/slot_%02d" % index, FileAccess.READ)
-	if not sav:
-		return false
-	var save := JSON.to_native(JSON.parse_string(sav.get_as_text()), allow_objects) if human_readable else sav.get_var(allow_objects)
-	var path: String = save["timeline_path"]
-	var timeline := current_timeline if current_timeline and current_timeline.path == path else load_timeline(path)
-	var idx: int = save["event_index"]
-	var lines: PackedStringArray = save["event_lines"]
-	for i in (range(idx, timeline.events.size()) + range(idx)) if idx < timeline.events.size() else timeline.events.size():
-		if timeline.events[i].lines != lines:
-			continue
-		timeline.stack = save["timeline_stack"]
-		if i != idx and not timeline.stack.is_empty():
-			break
-		timeline.variables = save["timeline_variables"]
-		await extension.load_data(save["extension_data"])
-		slot = index
-		start_timeline(timeline, i)
-		return true
-	return false
-
-
-func has_slot(index: int = slot) -> bool:
-	return FileAccess.file_exists("user://saves/slot_%02d" % index)
