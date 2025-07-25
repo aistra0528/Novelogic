@@ -10,7 +10,7 @@ Enable Novelogic in Project Settings > Plugins.
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var timeline = Novelogic.load_timeline("/path/to/file")
+    var timeline = Novelogic.load_timeline("/path/to/timeline")
     Novelogic.start_timeline(timeline)
 
 func _on_button_pressed():
@@ -25,11 +25,12 @@ Novelogic uses four spaces for indentation. Don't use tabs.
 signal text_started(text: String)
 ```
 
-```
-Hello!
+```novelogic
+This is a single line text.
 
-Hi,
-{player}!
+This is a
+multiline
+text.
 ```
 
 ### Dialogue
@@ -38,23 +39,22 @@ Hi,
 signal dialogue_started(dialogue: String, who: String)
 ```
 
-```
-Player: Hello!
+```novelogic
+Player: This is a single line dialogue.
 
-Npc: Hi,
-{player}!
+Npc: This is a
+multiline
+dialogue.
 ```
 
 ### Label
-```
+```novelogic
 @label
-...
 <> label_call
-...
 -> label_jump
 
 @label_call
-# Return where label called, or end the timeline.
+# Return where label/timeline called, or end the timeline.
 <-
 
 @label_jump
@@ -63,62 +63,62 @@ Npc: Hi,
 @timeline_jump
 -> timeline@label
 
-@timeline_jump_with_variables
+@timeline_call_with_variables
 <> timeline@label
 ```
 
 ### Assignment
-```
+```novelogic
 # Timeline variables
-hp = 42
-hp -= 3 * d(12) + 6
-game_over = hp <= 0
-log = "HP: {hp}"
+health = 42
+health -= 3 * d(12) + 6
+game_over = health <= 0
 ```
 
 ### Condition
-```
-d = d(6)
-if d == 1:
-    Huh?
-elif d == 6:
-    Nice!
+```novelogic
+result = d(6)
+if result == 6:
+    ...
+elif result == 1:
+    ...
 else:
-    It's {d}.
+    ...
 ```
 
 ### Choice
 ```gdscript
 signal choice_started(choices: PackedStringArray)
-...
+
 func handle_choice(choice: String):
 ```
 
-```
-- Buy something ?: Player.money > 0
+```novelogic
+- Buy something ?: gold > 0
     ...
 - Leave
     ...
-...
 ```
 
 ### Input
 ```gdscript
 signal input_started(prompt: String)
-...
+
 func handle_input(input: Variant):
 ```
 
-```
+```novelogic
 answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
-
-Player.birthday ?? res://date_picker.tscn
+birthday ?? res://date_picker.tscn
 ```
 
 ### Call
 ```gdscript
 class_name MyExtension extends NovelogicExtension
-...
+
+func _ready():
+    Novelogic.extension = self
+
 func _get(property: StringName) -> Variant:
     if property == Autoload.name:
         return Autoload
@@ -129,12 +129,7 @@ func do_something(...):
     ...
 ```
 
-```gdscript
-func _ready():
-    Novelogic.extension = MyExtension.new()
-```
-
-```
+```novelogic
 do_something(...)
 
 Autoload.do_something(...)

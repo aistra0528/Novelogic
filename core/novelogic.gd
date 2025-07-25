@@ -17,6 +17,7 @@ var current_event: TimelineEvent:
 var timeline_variables: Dictionary:
 	get:
 		return current_timeline.variables if current_timeline else {}
+var stack: Array[NovelogicTimeline] = []
 var error := OK
 
 
@@ -111,7 +112,11 @@ func handle_event(index: int, ignore_indent: bool = false):
 					OS.alert(path, "Timeline not found")
 					return
 				if event.trace:
+					stack.append(current_timeline)
+					current_timeline.stack.append(current_index)
 					timeline.variables = timeline_variables
+				elif not stack.is_empty():
+					stack.clear()
 				start_timeline(timeline, event.label)
 			else:
 				if event.trace:
@@ -123,8 +128,12 @@ func handle_event(index: int, ignore_indent: bool = false):
 			handle_next_event()
 		TimelineEvent.RETURN:
 			if current_timeline.stack.is_empty():
-				end_timeline()
-				return
+				if stack.is_empty():
+					end_timeline()
+					return
+				var timeline: NovelogicTimeline = stack.pop_back()
+				timeline.variables = timeline_variables
+				current_timeline = timeline
 			index = current_timeline.stack[-1]
 			current_timeline.stack.resize(current_timeline.stack.size() - 1)
 			var event := current_timeline.events[index] as TimelineJump
@@ -152,6 +161,12 @@ func handle_choice(choice: String):
 
 
 func handle_jump(label: String):
+	if label == "START":
+		handle_event(0, true)
+		return
+	if label == "END":
+		end_timeline()
+		return
 	for i in current_timeline.events.size():
 		if current_timeline.events[i] is TimelineLabel and label == (current_timeline.events[i] as TimelineLabel).require_label():
 			handle_event(i, true)
@@ -172,6 +187,7 @@ func handle_input(input: Variant):
 
 func end_timeline():
 	current_timeline = null
+	stack.clear()
 	timeline_ended.emit()
 
 
