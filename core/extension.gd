@@ -1,24 +1,7 @@
-class_name NovelogicExtension extends RefCounted
+class_name NovelogicExtension extends Node
 
 var _decks := {}
 var _last_cards := {}
-
-
-func clear():
-	_decks.clear()
-	_last_cards.clear()
-
-
-func get_data() -> Dictionary:
-	return {
-		"_decks": _decks,
-		"_last_cards": _last_cards,
-	}
-
-
-func load_data(data: Dictionary):
-	_decks = data["_decks"]
-	_last_cards = data["_last_cards"]
 
 
 func d(to: int) -> int:
