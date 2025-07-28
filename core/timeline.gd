@@ -6,7 +6,7 @@ var stack: PackedInt32Array = []
 var variables := {}
 
 
-static func from_file(path: String) -> NovelogicTimeline:
+static func from_file(path: String, include_type: Array = []) -> NovelogicTimeline:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
 		return null
@@ -18,7 +18,7 @@ static func from_file(path: String) -> NovelogicTimeline:
 	var events: Array[TimelineEvent] = []
 	var i := 0
 	while i < lines.size():
-		var event := TimelineEvent.create(lines[i])
+		var event := TimelineEvent.create(lines[i], include_type)
 		if not event:
 			i += 1
 			continue

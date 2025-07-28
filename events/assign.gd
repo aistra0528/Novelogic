@@ -40,9 +40,3 @@ func execute():
 		"/=":
 			it.set(key, it.get(key) / result)
 	Novelogic.handle_next_event()
-
-
-func _to_string() -> String:
-	if section:
-		return str("L", start_line, " Assign: ", section, ".", key, " ", assignment, " ", expression)
-	return str("L", start_line, " Assign: ", key, " ", assignment, " ", expression)

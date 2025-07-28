@@ -25,9 +25,3 @@ func execute():
 	if branch == "else" or expression and Novelogic.execute_expression(expression, start_line):
 		Novelogic.current_indent += 1
 	Novelogic.handle_next_event()
-
-
-func _to_string() -> String:
-	if branch == "else":
-		return str("L", start_line, " Conditions: ", branch)
-	return str("L", start_line, " Conditions: ", branch, " ", expression)

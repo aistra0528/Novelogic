@@ -15,7 +15,3 @@ func process():
 		prompt = result.get_string("expression")
 
 	processed = true
-
-
-func _to_string() -> String:
-	return str("L", start_line, " Input: ", prompt)

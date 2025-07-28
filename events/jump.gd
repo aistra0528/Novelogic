@@ -21,7 +21,3 @@ func require_trace() -> bool:
 	if not processed:
 		process()
 	return trace
-
-
-func _to_string() -> String:
-	return str("L", start_line, " Jump with trace: " if trace else " Jump: ", timeline, "@", label)

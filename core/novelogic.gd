@@ -21,8 +21,8 @@ var stack: Array[NovelogicTimeline] = []
 var error := OK
 
 
-func load_timeline(path: String) -> NovelogicTimeline:
-	return NovelogicTimeline.from_file(path)
+func load_timeline(path: String, include_type: Array = []) -> NovelogicTimeline:
+	return NovelogicTimeline.from_file(path, include_type)
 
 
 func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):

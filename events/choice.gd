@@ -43,9 +43,3 @@ func available_choices() -> PackedStringArray:
 		if event.expression.is_empty() or Novelogic.execute_expression(event.expression, event.start_line):
 			available_choices.append(event.choice)
 	return available_choices
-
-
-func _to_string() -> String:
-	if expression:
-		return str("L", start_line, " Choices: ", choice, " when ", expression)
-	return str("L", start_line, " Choices: ", choice)

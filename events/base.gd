@@ -52,12 +52,12 @@ var lines := PackedStringArray()
 var processed := false
 
 
-static func create(line: String) -> TimelineEvent:
-	var event: TimelineEvent = null
+static func create(line: String, include_type: Array = []) -> TimelineEvent:
 	var type := match_type(line)
+	if type == COMMENT or (include_type and type not in include_type):
+		return null
+	var event: TimelineEvent
 	match type:
-		COMMENT:
-			return null
 		DIALOGUE:
 			event = TimelineDialogue.new()
 		CHOICE:

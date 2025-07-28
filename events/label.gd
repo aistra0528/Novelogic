@@ -17,7 +17,3 @@ func require_label() -> String:
 	if not processed:
 		process()
 	return label
-
-
-func _to_string() -> String:
-	return str("L", start_line, " Label: @", label)

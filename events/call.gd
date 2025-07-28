@@ -18,7 +18,3 @@ func execute():
 		return
 	if Novelogic.current_event == self and handle_next:
 		Novelogic.handle_next_event()
-
-
-func _to_string() -> String:
-	return str("L", start_line, " Call: ", expression)
