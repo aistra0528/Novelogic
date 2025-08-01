@@ -2,8 +2,20 @@ class_name TimelineChoice extends TimelineEvent
 
 var choice := ""
 var expression := ""
-var is_first := true
 var choices := PackedInt32Array()
+
+var is_first: bool = true:
+	get:
+		if is_first:
+			for i in range(Novelogic.current_index - 1, -1, -1):
+				var event := Novelogic.current_timeline.events[i]
+				if indent < event.indent:
+					continue
+				if indent > event.indent or event is not TimelineChoice:
+					break
+				else:
+					return event.processed
+		return is_first
 
 
 func process():
@@ -17,13 +29,11 @@ func process():
 
 
 func process_choices():
-	var i := Novelogic.current_index
-	choices.append(i)
-	i += 1
-	while i < Novelogic.current_timeline.events.size():
+	choices.append(Novelogic.current_index)
+	for i in range(Novelogic.current_index + 1, Novelogic.current_timeline.events.size()):
 		var event := Novelogic.current_timeline.events[i]
 		if indent < event.indent:
-			pass
+			continue
 		elif indent > event.indent or event is not TimelineChoice:
 			break
 		else:
@@ -31,7 +41,6 @@ func process_choices():
 			if not event.processed:
 				event.process()
 			choices.append(i)
-		i += 1
 
 
 func available_choices() -> PackedStringArray:
