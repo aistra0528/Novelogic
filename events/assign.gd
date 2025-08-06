@@ -23,20 +23,20 @@ func execute():
 	var result := Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
-	var it := (
+	var obj := (
 		Novelogic.execute_expression(section, start_line) if section else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
 	)
 	if Novelogic.error:
 		return
 	match assignment:
 		"=":
-			it.set(key, result)
+			obj.set(key, result)
 		"+=":
-			it.set(key, it.get(key) + result)
+			obj.set(key, obj.get(key) + result)
 		"-=":
-			it.set(key, it.get(key) - result)
+			obj.set(key, obj.get(key) - result)
 		"*=":
-			it.set(key, it.get(key) * result)
+			obj.set(key, obj.get(key) * result)
 		"/=":
-			it.set(key, it.get(key) / result)
+			obj.set(key, obj.get(key) / result)
 	Novelogic.handle_next_event()

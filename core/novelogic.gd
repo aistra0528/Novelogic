@@ -101,6 +101,11 @@ func handle_event(index: int, ignore_indent: bool = false):
 				handle_next_event()
 		TimelineEvent.JUMP:
 			var event := current_event as TimelineJump
+			if event.expression:
+				var result := execute_expression(event.expression, event.start_line)
+				if error or not result:
+					handle_next_event()
+					return
 			if event.timeline:
 				var path := current_timeline.path
 				if path.get_extension():
@@ -136,10 +141,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 				current_timeline = timeline
 			index = current_timeline.stack[-1]
 			current_timeline.stack.resize(current_timeline.stack.size() - 1)
-			var event := current_timeline.events[index] as TimelineJump
-			if event and event.require_trace():
-				current_indent = event.indent
-				handle_event(index + 1)
+			handle_event(index + 1, true)
 		TimelineEvent.INPUT:
 			input_started.emit((current_event as TimelineInput).prompt)
 		TimelineEvent.ASSIGN:
@@ -178,10 +180,10 @@ func handle_input(input: Variant):
 	var event := current_event as TimelineInput
 	if not event:
 		return
-	var it := execute_expression(event.section, event.start_line) if event.section else extension if event.key in extension else timeline_variables
+	var obj := execute_expression(event.section, event.start_line) if event.section else extension if event.key in extension else timeline_variables
 	if error:
 		return
-	it.set(event.key, input)
+	obj.set(event.key, input)
 	handle_next_event()
 
 
@@ -196,10 +198,10 @@ func execute_expression(expression: String, line: int) -> Variant:
 	error = expr.parse(expression, timeline_variables.keys())
 	if error:
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Bad expression")
-		return
+		return null
 	var result := expr.execute(timeline_variables.values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
 		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")
-		return
+		return null
 	return result
