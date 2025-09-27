@@ -8,7 +8,7 @@ func d(to: int) -> int:
 	return randi_range(1, to)
 
 
-func draw(deck: Array) -> Variant:
+func draw(...deck: Array) -> Variant:
 	var key := deck.duplicate()
 	if key not in _decks:
 		deck.shuffle()

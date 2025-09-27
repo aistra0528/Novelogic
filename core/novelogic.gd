@@ -8,7 +8,7 @@ signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String)
 
 var current_timeline: NovelogicTimeline = null
-var extension: NovelogicExtension = null
+var extension: Object = null
 var current_index := 0
 var current_indent := 0
 var current_event: TimelineEvent:
