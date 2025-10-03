@@ -60,11 +60,21 @@ dialogue.
 @label_jump
 -> timeline_jump
 
+@label_jump_if_condition
+-> timeline_jump ?: 1 + 1 == 2
+
 @timeline_jump
 -> timeline@label
 
 @timeline_call_with_variables
 <> timeline@label
+
+@jump_to_beginning
+-> START
+
+@end_timeline
+-> END
+
 ```
 
 ### Assignment
@@ -125,7 +135,7 @@ func _get(property: StringName) -> Variant:
     return null
 
 func do_something(...):
-    # (Novelogic.current_event as TimelineCall).handle_next = false
+    # (Novelogic.current_event as TimelineCall).wait = true
     ...
 ```
 

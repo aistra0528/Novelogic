@@ -1,6 +1,6 @@
 class_name TimelineCall extends TimelineEvent
 
-var handle_next := true
+var wait := false
 var expression := ""
 
 
@@ -16,5 +16,5 @@ func execute():
 	await Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
-	if Novelogic.current_event == self and handle_next:
+	if Novelogic.current_event == self and not wait:
 		Novelogic.handle_next_event()
