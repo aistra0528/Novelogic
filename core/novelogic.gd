@@ -32,8 +32,6 @@ func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
 	timeline_started.emit()
 	current_index = 0
 	current_indent = 0
-	if not extension:
-		extension = NovelogicExtension.new()
 	if not is_same(current_index, index_or_label):
 		if index_or_label is String:
 			handle_jump(index_or_label)
@@ -120,14 +118,10 @@ func handle_event(index: int, ignore_indent: bool = false):
 					stack.append(current_timeline)
 					current_timeline.stack.append(current_index)
 					timeline.variables = timeline_variables
-				elif not stack.is_empty():
-					stack.clear()
 				start_timeline(timeline, event.label)
 			else:
 				if event.trace:
 					current_timeline.stack.append(current_index)
-				elif not current_timeline.stack.is_empty():
-					current_timeline.stack.clear()
 				handle_jump(event.label)
 		TimelineEvent.LABEL:
 			handle_next_event()

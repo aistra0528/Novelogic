@@ -135,7 +135,7 @@ func _get(property: StringName) -> Variant:
     return null
 
 func do_something(...):
-    # (Novelogic.current_event as TimelineCall).wait = true
+    # (Novelogic.current_event as TimelineCall).auto_next = false
     ...
 ```
 
