@@ -35,7 +35,7 @@ const CAPTURE := {
 	NAME = "(?<name>[A-Za-z]\\w*)",  # \w = [A-Za-z0-9_]
 	GOTO = "(?<goto><>|->)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
-	VARIABLE = "((?<section>[A-Za-z]\\w*)\\.)?(?<key>[A-Za-z_]\\w*)",
+	VARIABLE = "((?<section>[A-Za-z]\\w*(\\.[A-Za-z_]\\w*)*)\\.)?(?<key>[A-Za-z_]\\w*)",
 	ASSIGNMENT = "(?<assignment>=|\\+=|-=|\\*=|/=)",
 	EXPR = "(?<expr>.+?)",
 	EXPRESSION = "(?<expression>.+)",

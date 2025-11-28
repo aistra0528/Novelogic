@@ -16,3 +16,9 @@ func process():
 		trace = result.get_string("goto") == "<>"
 		expression = result.get_string("expression")
 	processed = true
+
+
+func require_trace() -> bool:
+	if not processed:
+		process()
+	return trace

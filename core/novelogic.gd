@@ -135,7 +135,10 @@ func handle_event(index: int, ignore_indent: bool = false):
 				current_timeline = timeline
 			index = current_timeline.stack[-1]
 			current_timeline.stack.resize(current_timeline.stack.size() - 1)
-			handle_event(index + 1, true)
+			var event := current_timeline.events[index] as TimelineJump
+			if event and event.require_trace():
+				current_indent = event.indent
+				handle_event(index + 1)
 		TimelineEvent.INPUT:
 			input_started.emit((current_event as TimelineInput).prompt)
 		TimelineEvent.ASSIGN:
