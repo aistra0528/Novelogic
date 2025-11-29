@@ -6,15 +6,15 @@ var choices := PackedInt32Array()
 
 var is_first: bool = true:
 	get:
-		if is_first:
+		if is_first and choices.is_empty():
 			for i in range(Novelogic.current_index - 1, -1, -1):
 				var event := Novelogic.current_timeline.events[i]
 				if indent < event.indent:
 					continue
 				if indent > event.indent or event is not TimelineChoice:
 					break
-				else:
-					return event.processed
+				is_first = false
+				break
 		return is_first
 
 
@@ -34,13 +34,12 @@ func process_choices():
 		var event := Novelogic.current_timeline.events[i]
 		if indent < event.indent:
 			continue
-		elif indent > event.indent or event is not TimelineChoice:
+		if indent > event.indent or event is not TimelineChoice:
 			break
-		else:
-			event.is_first = false
-			if not event.processed:
-				event.process()
-			choices.append(i)
+		event.is_first = false
+		if not event.processed:
+			event.process()
+		choices.append(i)
 
 
 func available_choices() -> PackedStringArray:

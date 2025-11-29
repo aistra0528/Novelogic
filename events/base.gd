@@ -18,7 +18,7 @@ const REGEX := {
 	INDENT = "^{INDENT}+",
 	COMMENT = "^{INDENT}*{COMMENT}$",
 	TEXT = "^{INDENT}*.+$",
-	DIALOGUE = "^{INDENT}*{NAME}: {EXPRESSION}$",
+	DIALOGUE = "^{INDENT}*{NAME}:({ID}:)? {EXPRESSION}$",
 	CHOICE = "^{INDENT}*- {EXPR}( \\?: {EXPRESSION})?$",
 	JUMP = "^{INDENT}*{GOTO} {WHERE}( \\?: {EXPRESSION})?$",
 	LABEL = "^{INDENT}*@{NAME}$",
@@ -32,7 +32,8 @@ const REGEX := {
 const CAPTURE := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
-	NAME = "(?<name>[A-Za-z]\\w*)",  # \w = [A-Za-z0-9_]
+	ID = "(?<id>[A-Za-z0-9]\\w*)",  # \w = [A-Za-z0-9_]
+	NAME = "(?<name>[A-Za-z]\\w*)",
 	GOTO = "(?<goto><>|->)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
 	VARIABLE = "((?<section>[A-Za-z]\\w*(\\.[A-Za-z_]\\w*)*)\\.)?(?<key>[A-Za-z_]\\w*)",
@@ -128,3 +129,7 @@ func is_multiline(line: String) -> bool:
 
 func process():
 	processed = true
+
+
+func execute():
+	assert(false, "Not yet implemented")

@@ -36,15 +36,23 @@ text.
 ### Dialogue
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String)
+signal dialogue_started(dialogue: String, who: String, id: String)
 ```
 
 ```novelogic
-Player: This is a single line dialogue.
+Boy: This is a single line dialogue.
 
-Npc: This is a
+Boy: This is a
 multiline
 dialogue.
+
+Girl:TRANSLATION_ID: Bonjour !
+
+Girl:voice128: Can you hear me?
+
+Girl:128: It also works!
+
+Girl:happy: Use it in your favorite way!
 ```
 
 ### Label
@@ -83,6 +91,9 @@ dialogue.
 health = 42
 health -= 3 * d(12) + 6
 game_over = health <= 0
+
+# Extension variables
+Game.player_name = "You"
 ```
 
 ### Condition
@@ -104,9 +115,13 @@ func handle_choice(choice: String):
 ```
 
 ```novelogic
-- Buy something ?: gold > 0
+- THE LEFT BRANCH
+    flag.left = true
     ...
-- Leave
+- THE RIGHT BRANCH
+    flag.right = true
+    ...
+- THE MAIN ROAD ?: flag.left and flag.right
     ...
 ```
 
@@ -119,7 +134,9 @@ func handle_input(input: Variant):
 
 ```novelogic
 answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
-birthday ?? res://date_picker.tscn
+
+# Custom input scene
+Player.birthday ?? "res://date_picker.tscn"
 ```
 
 ### Call

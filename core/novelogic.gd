@@ -2,8 +2,9 @@ extends Node
 
 signal timeline_ended
 signal timeline_started
+signal error_occurred(message: String, title: String)
 signal text_started(text: String)
-signal dialogue_started(dialogue: String, who: String)
+signal dialogue_started(dialogue: String, who: String, id: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String)
 
@@ -90,7 +91,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 			text_started.emit((current_event as TimelineText).text)
 		TimelineEvent.DIALOGUE:
 			var event := current_event as TimelineDialogue
-			dialogue_started.emit(event.dialogue, event.who)
+			dialogue_started.emit(event.dialogue, event.who, event.id)
 		TimelineEvent.CHOICE:
 			var event := current_event as TimelineChoice
 			if event.is_first:
@@ -112,7 +113,8 @@ func handle_event(index: int, ignore_indent: bool = false):
 					path = path.get_base_dir() + "/" + event.timeline
 				var timeline := load_timeline(path)
 				if not timeline:
-					OS.alert(path, "Timeline not found")
+					error = ERR_FILE_NOT_FOUND
+					error_occurred.emit(path, "Timeline not found")
 					return
 				if event.trace:
 					stack.append(current_timeline)
@@ -170,7 +172,8 @@ func handle_jump(label: String):
 		if current_timeline.events[i] is TimelineLabel and label == (current_timeline.events[i] as TimelineLabel).require_label():
 			handle_event(i, true)
 			return
-	OS.alert(current_timeline.path + "@" + label, "Label not found")
+	error = ERR_DOES_NOT_EXIST
+	error_occurred.emit(current_timeline.path + "@" + label, "Label not found")
 
 
 func handle_input(input: Variant):
@@ -190,15 +193,15 @@ func end_timeline():
 	timeline_ended.emit()
 
 
-func execute_expression(expression: String, line: int) -> Variant:
+func execute_expression(expression: String, from_line: int) -> Variant:
 	var expr := Expression.new()
 	error = expr.parse(expression, timeline_variables.keys())
 	if error:
-		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Bad expression")
+		error_occurred.emit(str(current_timeline.path, ":", from_line, ": ", expression), "Bad expression")
 		return null
 	var result := expr.execute(timeline_variables.values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
-		OS.alert(str(current_timeline.path, ":", line, ": ", expression), "Execute failed")
+		error_occurred.emit(str(current_timeline.path, ":", from_line, ": ", expression), "Execute failed")
 		return null
 	return result

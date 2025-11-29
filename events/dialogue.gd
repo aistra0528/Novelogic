@@ -1,6 +1,7 @@
 class_name TimelineDialogue extends TimelineEvent
 
 var who := ""
+var id := ""
 var dialogue := ""
 
 
@@ -12,6 +13,7 @@ func process():
 			var result := reg.search(lines[i])
 			if result:
 				who = result.get_string("name")
+				id = result.get_string("id")
 				dialogue = result.get_string("expression")
 		else:
 			dialogue += "\n"
