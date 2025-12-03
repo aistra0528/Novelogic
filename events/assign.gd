@@ -39,4 +39,6 @@ func execute():
 			obj.set(key, obj.get(key) * result)
 		"/=":
 			obj.set(key, obj.get(key) / result)
+		"^=":
+			obj.set(key, obj.get(key) ^ result)
 	Novelogic.handle_next_event()
