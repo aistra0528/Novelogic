@@ -1,4 +1,5 @@
-class_name TimelineEvent extends RefCounted
+class_name TimelineEvent
+extends RefCounted
 
 enum {
 	COMMENT,
@@ -18,7 +19,7 @@ const REGEX := {
 	INDENT = "^{INDENT}+",
 	COMMENT = "^{INDENT}*{COMMENT}$",
 	TEXT = "^{INDENT}*.+$",
-	DIALOGUE = "^{INDENT}*{NAME}:({ID}:)? {EXPRESSION}$",
+	DIALOGUE = "^{INDENT}*{NAME}:({MARK}:)? {EXPRESSION}$",
 	CHOICE = "^{INDENT}*- {EXPR}( \\?: {EXPRESSION})?$",
 	JUMP = "^{INDENT}*{GOTO} {WHERE}( \\?: {EXPRESSION})?$",
 	LABEL = "^{INDENT}*@{NAME}$",
@@ -32,7 +33,7 @@ const REGEX := {
 const CAPTURE := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
-	ID = "(?<id>[A-Za-z0-9]\\w*)",  # \w = [A-Za-z0-9_]
+	MARK = "(?<mark>[A-Za-z0-9]\\w*)", # \w = [A-Za-z0-9_]
 	NAME = "(?<name>[A-Za-z]\\w*)",
 	GOTO = "(?<goto><>|->)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",

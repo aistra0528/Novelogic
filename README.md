@@ -10,7 +10,7 @@ Enable Novelogic in Project Settings > Plugins.
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var timeline = Novelogic.load_timeline("/path/to/timeline")
+    var timeline = Novelogic.load_timeline("/path/to/timeline.ntl")
     Novelogic.start_timeline(timeline)
 
 func _on_button_pressed():
@@ -36,23 +36,18 @@ text.
 ### Dialogue
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String, id: String)
+signal dialogue_started(dialogue: String, who: String, mark: String)
 ```
 
 ```novelogic
-Boy: This is a single line dialogue.
-
-Boy: This is a
+bob: This is a single line dialogue.
+bob: This is a
 multiline
 dialogue.
-
-Girl:TRANSLATION_ID: Bonjour !
-
-Girl:voice128: Can you hear me?
-
-Girl:128: It also works!
-
-Girl:happy: Use it in your favorite way!
+alice:TRANSLATION_ID: Bonjour !
+alice:voice001: Can you hear me?
+alice:1godotresuid: It also works!
+alice:happy: How to use marks is up to you!
 ```
 
 ### Label
@@ -98,10 +93,10 @@ Game.player_name = "You"
 
 ### Condition
 ```novelogic
-result = d(6)
-if result == 6:
+roll = d(6)
+if roll == 6:
     ...
-elif result == 1:
+elif roll == 1:
     ...
 else:
     ...
@@ -134,9 +129,11 @@ func handle_input(input: Variant):
 
 ```novelogic
 answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+player: The answer is {answer}.
 
 # Custom input scene
 Player.birthday ?? "res://date_picker.tscn"
+player: My birthday is on ${Date.human_readable(Player.birthday)}.
 ```
 
 ### Call

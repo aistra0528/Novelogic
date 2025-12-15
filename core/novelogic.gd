@@ -4,7 +4,7 @@ signal timeline_ended
 signal timeline_started
 signal error_occurred(message: String, title: String)
 signal text_started(text: String)
-signal dialogue_started(dialogue: String, who: String, id: String)
+signal dialogue_started(dialogue: String, who: String, mark: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String)
 
@@ -17,7 +17,7 @@ var current_event: TimelineEvent:
 		return current_timeline.events[current_index] if current_timeline else null
 var timeline_variables: Dictionary:
 	get:
-		return current_timeline.variables if current_timeline else {}
+		return current_timeline.variables if current_timeline else { }
 var stack: Array[NovelogicTimeline] = []
 var error := OK
 
@@ -91,7 +91,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 			text_started.emit((current_event as TimelineText).text)
 		TimelineEvent.DIALOGUE:
 			var event := current_event as TimelineDialogue
-			dialogue_started.emit(event.dialogue, event.who, event.id)
+			dialogue_started.emit(event.dialogue, event.who, event.mark)
 		TimelineEvent.CHOICE:
 			var event := current_event as TimelineChoice
 			if event.is_first:

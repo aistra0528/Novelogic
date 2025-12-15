@@ -1,12 +1,12 @@
-class_name NovelogicExtension extends Node
+class_name NovelogicExtension
+extends Node
 
-var _decks := {}
-var _last_cards := {}
+var _decks := { }
+var _last_cards := { }
 
 
 func wait(sec: float):
-	if is_inside_tree():
-		return get_tree().create_timer(sec).timeout
+	return Novelogic.get_tree().create_timer(sec).timeout
 
 
 func d(to: int) -> int:
