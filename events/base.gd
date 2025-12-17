@@ -12,6 +12,7 @@ enum {
 	INPUT,
 	ASSIGN,
 	CONDITION,
+	WHEN,
 	CALL,
 }
 
@@ -27,6 +28,7 @@ const REGEX := {
 	INPUT = "^{INDENT}*{VARIABLE} \\?\\? {EXPRESSION}$",
 	ASSIGN = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
+	WHEN = "^{INDENT}*when( {EXPRESSION})?:$",
 	CALL = "^{INDENT}*{VARIABLE}\\(.*\\)$",
 }
 
@@ -35,13 +37,13 @@ const CAPTURE := {
 	COMMENT = "(#.*)",
 	MARK = "(?<mark>[A-Za-z0-9]\\w*)", # \w = [A-Za-z0-9_]
 	NAME = "(?<name>[A-Za-z]\\w*)",
-	GOTO = "(?<goto><>|->)",
+	GOTO = "(?<goto>->|<>)",
 	WHERE = "((?<timeline>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
 	VARIABLE = "((?<section>[A-Za-z]\\w*(\\.[A-Za-z_]\\w*)*)\\.)?(?<key>[A-Za-z_]\\w*)",
-	ASSIGNMENT = "(?<assignment>=|\\+=|-=|\\*=|/=|\\^=)",
+	ASSIGNMENT = "(?<assignment>(\\+|-|\\*|/|\\*\\*|%|&|\\||\\^|<<|>>)?=)",
 	EXPR = "(?<expr>.+?)",
 	EXPRESSION = "(?<expression>.+)",
-	BRANCH = "(?<branch>if|elif|else)",
+	BRANCH = "(?<branch>if|elif|case|else)",
 }
 
 var type := TEXT
@@ -76,6 +78,8 @@ static func create(line: String, include_type: Array = []) -> TimelineEvent:
 			event = TimelineAssign.new()
 		CONDITION:
 			event = TimelineCondition.new()
+		WHEN:
+			event = TimelineWhen.new()
 		CALL:
 			event = TimelineCall.new()
 		_:
@@ -89,26 +93,27 @@ static func match_type(line: String) -> int:
 	var reg := RegEx.new()
 	if line.is_empty() or reg.compile(REGEX.COMMENT.format(CAPTURE)) == OK and reg.search(line):
 		return COMMENT
-	elif reg.compile(REGEX.DIALOGUE.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.DIALOGUE.format(CAPTURE)) == OK and reg.search(line):
 		return DIALOGUE
-	elif reg.compile(REGEX.CHOICE.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.CHOICE.format(CAPTURE)) == OK and reg.search(line):
 		return CHOICE
-	elif reg.compile(REGEX.JUMP.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.JUMP.format(CAPTURE)) == OK and reg.search(line):
 		return JUMP
-	elif reg.compile(REGEX.LABEL.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.LABEL.format(CAPTURE)) == OK and reg.search(line):
 		return LABEL
-	elif reg.compile(REGEX.RETURN.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.RETURN.format(CAPTURE)) == OK and reg.search(line):
 		return RETURN
-	elif reg.compile(REGEX.INPUT.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.INPUT.format(CAPTURE)) == OK and reg.search(line):
 		return INPUT
-	elif reg.compile(REGEX.ASSIGN.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.ASSIGN.format(CAPTURE)) == OK and reg.search(line):
 		return ASSIGN
-	elif reg.compile(REGEX.CONDITION.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.CONDITION.format(CAPTURE)) == OK and reg.search(line):
 		return CONDITION
-	elif reg.compile(REGEX.CALL.format(CAPTURE)) == OK and reg.search(line):
+	if reg.compile(REGEX.WHEN.format(CAPTURE)) == OK and reg.search(line):
+		return WHEN
+	if reg.compile(REGEX.CALL.format(CAPTURE)) == OK and reg.search(line):
 		return CALL
-	else:
-		return TEXT
+	return TEXT
 
 
 static func match_indent(line: String) -> int:

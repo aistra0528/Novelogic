@@ -66,7 +66,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 		return
 	elif current_indent > current_event.indent:
 		current_indent = current_event.indent
-		if current_event is TimelineCondition and not (current_event as TimelineCondition).is_if_branch():
+		if current_event is TimelineCondition and (current_event as TimelineCondition).require_branch() != TimelineCondition.BRANCH.IF:
 			while true:
 				index += 1
 				if index >= current_timeline.events.size():
@@ -79,7 +79,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 				elif current_indent > event.indent:
 					current_indent = event.indent
 
-				if event is not TimelineCondition or (event as TimelineCondition).is_if_branch():
+				if event is not TimelineCondition or (event as TimelineCondition).require_branch() == TimelineCondition.BRANCH.IF:
 					current_index = index
 					break
 
@@ -143,12 +143,8 @@ func handle_event(index: int, ignore_indent: bool = false):
 				handle_event(index + 1)
 		TimelineEvent.INPUT:
 			input_started.emit((current_event as TimelineInput).prompt)
-		TimelineEvent.ASSIGN:
-			(current_event as TimelineAssign).execute()
-		TimelineEvent.CONDITION:
-			(current_event as TimelineCondition).execute()
-		TimelineEvent.CALL:
-			(current_event as TimelineCall).execute()
+		_:
+			current_event.execute()
 
 
 func handle_choice(choice: String):

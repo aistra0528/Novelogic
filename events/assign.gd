@@ -1,4 +1,5 @@
-class_name TimelineAssign extends TimelineEvent
+class_name TimelineAssign
+extends TimelineEvent
 
 var section := ""
 var key := ""
@@ -39,6 +40,18 @@ func execute():
 			obj.set(key, obj.get(key) * result)
 		"/=":
 			obj.set(key, obj.get(key) / result)
+		"**=":
+			obj.set(key, obj.get(key) ** result)
+		"%=":
+			obj.set(key, obj.get(key) % result)
+		"&=":
+			obj.set(key, obj.get(key) & result)
+		"|=":
+			obj.set(key, obj.get(key) | result)
 		"^=":
 			obj.set(key, obj.get(key) ^ result)
+		"<<=":
+			obj.set(key, obj.get(key) << result)
+		">>=":
+			obj.set(key, obj.get(key) >> result)
 	Novelogic.handle_next_event()

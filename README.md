@@ -100,6 +100,22 @@ elif roll == 1:
     ...
 else:
     ...
+
+when:
+    case roll == 6:
+        ...
+    case roll == 1:
+        ...
+    else:
+        ...
+
+when d(7):
+    case 1:
+        Monday...
+    case 2, 3, 4, 5:
+        Tuesday, Wednesday, Thursday, Friday.
+    else:
+        Saturday, Sunday!
 ```
 
 ### Choice

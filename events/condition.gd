@@ -1,4 +1,12 @@
-class_name TimelineCondition extends TimelineEvent
+class_name TimelineCondition
+extends TimelineEvent
+
+const BRANCH := {
+	IF = "if",
+	ELIF = "elif",
+	CASE = "case",
+	ELSE = "else",
+}
 
 var branch := ""
 var expression := ""
@@ -15,13 +23,17 @@ func process():
 	processed = true
 
 
-func is_if_branch() -> bool:
+func require_branch() -> String:
 	if not processed:
 		process()
-	return branch == "if"
+	return branch
 
 
 func execute():
-	if branch == "else" or expression and Novelogic.execute_expression(expression, start_line):
-		Novelogic.current_indent += 1
+	match branch:
+		BRANCH.IF, BRANCH.ELIF:
+			if expression and Novelogic.execute_expression(expression, start_line):
+				Novelogic.current_indent += 1
+		BRANCH.ELSE:
+			Novelogic.current_indent += 1
 	Novelogic.handle_next_event()
