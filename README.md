@@ -10,11 +10,12 @@ Enable Novelogic in Project Settings > Plugins.
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var timeline = Novelogic.load_timeline("/path/to/timeline.ntl")
+    var timeline := Novelogic.load_timeline("/path/to/timeline.ntl")
     Novelogic.start_timeline(timeline)
 
 func _on_button_pressed():
-    Novelogic.handle_next_event()
+    if Novelogic.current_event is TimelineText or Novelogic.current_event is TimelineDialogue:
+        Novelogic.handle_next_event()
 ```
 
 Novelogic uses four spaces for indentation. Don't use tabs.
@@ -44,7 +45,7 @@ bob: This is a single line dialogue.
 bob: This is a
 multiline
 dialogue.
-alice:TRANSLATION_ID: Bonjour !
+alice:TRANSLATION_ID: 你好！
 alice:voice001: Can you hear me?
 alice:1godotresuid: It also works!
 alice:happy: How to use marks is up to you!
@@ -154,23 +155,33 @@ player: My birthday is on ${Date.human_readable(Player.birthday)}.
 
 ### Call
 ```gdscript
-class_name MyExtension extends NovelogicExtension
+class_name MyExtension
+extends NovelogicExtension # Optional
 
-func _ready():
+func _init():
     Novelogic.extension = self
 
 func _get(property: StringName) -> Variant:
-    if property == Autoload.name:
-        return Autoload
+    # Autoload
+    if super._get(property):
+        return super._get(property)
+    ...
     return null
 
 func do_something(...):
     # (Novelogic.current_event as TimelineCall).auto_next = false
     ...
+
+func wait_something(...) -> Signal:
+    var tween := ...
+    ...
+    return tween.finished
 ```
 
 ```novelogic
 do_something(...)
+# await is not required
+wait_something(...)
 
 Autoload.do_something(...)
 ```
