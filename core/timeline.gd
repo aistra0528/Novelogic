@@ -1,9 +1,9 @@
-class_name NovelogicTimeline extends RefCounted
+class_name NovelogicTimeline
 
 var path := ""
 var events: Array[TimelineEvent] = []
 var stack: PackedInt32Array = []
-var variables := {}
+var variables := { }
 
 
 static func from_file(path: String, include_type: Array = []) -> NovelogicTimeline:

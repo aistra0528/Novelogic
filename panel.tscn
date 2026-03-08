@@ -1,0 +1,104 @@
+[gd_scene format=3 uid="uid://cp4eisx3j583b"]
+
+[ext_resource type="Script" uid="uid://4pfycga741nq" path="res://addons/novelogic/panel.gd" id="1_iogkg"]
+
+[node name="CenterContainer" type="CenterContainer" unique_id=2138750118]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+script = ExtResource("1_iogkg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1253609648]
+layout_mode = 2
+
+[node name="HBoxContainer1" type="HBoxContainer" parent="VBoxContainer" unique_id=1278842774]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer1" unique_id=432784089]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Input Folder"
+
+[node name="InputButton" type="Button" parent="VBoxContainer/HBoxContainer1" unique_id=1110178331]
+layout_mode = 2
+text = "Select"
+
+[node name="InputEdit" type="LineEdit" parent="VBoxContainer" unique_id=1592519746]
+unique_name_in_owner = true
+layout_mode = 2
+text = "res://timelines"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=253801546]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=262652074]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Output Folder"
+
+[node name="OutputButton" type="Button" parent="VBoxContainer/HBoxContainer2" unique_id=1160997982]
+layout_mode = 2
+text = "Select"
+
+[node name="OutputEdit" type="LineEdit" parent="VBoxContainer" unique_id=85372608]
+unique_name_in_owner = true
+layout_mode = 2
+text = "res://i18n/timelines"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer" unique_id=1821698107]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer3" unique_id=1601259440]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Locale"
+
+[node name="LocaleEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer3" unique_id=1202781867]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer" unique_id=910086480]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer4" unique_id=827786890]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Plural Placeholder"
+
+[node name="PlaceholderEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer4" unique_id=2023047387]
+unique_name_in_owner = true
+layout_mode = 2
+text = "{n}"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="VBoxContainer" unique_id=244631081]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer5" unique_id=1057036572]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Dialogue Mark in Context"
+
+[node name="MarkBox" type="CheckBox" parent="VBoxContainer/HBoxContainer5" unique_id=304905071]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="VBoxContainer" unique_id=900974803]
+layout_mode = 2
+
+[node name="GenerateCSV" type="Button" parent="VBoxContainer/HBoxContainer6" unique_id=1583225601]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Generate CSV"
+
+[node name="GeneratePOT" type="Button" parent="VBoxContainer/HBoxContainer6" unique_id=1302567133]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Generate POT"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer1/InputButton" to="." method="_on_input_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer2/OutputButton" to="." method="_on_output_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer6/GenerateCSV" to="." method="_on_generate_csv_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer6/GeneratePOT" to="." method="_on_generate_pot_pressed"]

@@ -42,13 +42,16 @@ signal dialogue_started(dialogue: String, who: String, mark: String)
 
 ```novelogic
 bob: This is a single line dialogue.
+
 bob: This is a
 multiline
 dialogue.
-alice:TRANSLATION_ID: 你好！
-alice:voice001: Can you hear me?
+
+alice:voice_01: Can you hear me?
+
 alice:1godotresuid: It also works!
-alice:happy: How to use marks is up to you!
+
+alice:smile: How to use marks is up to you!
 ```
 
 ### Label
@@ -89,7 +92,7 @@ health -= 3 * d(12) + 6
 game_over = health <= 0
 
 # Extension variables
-Game.player_name = "You"
+GameState.good_ending = true
 ```
 
 ### Condition
@@ -123,7 +126,7 @@ when d(7):
 ```gdscript
 signal choice_started(choices: PackedStringArray)
 
-func handle_choice(choice: String):
+func handle_choice(choice: String)
 ```
 
 ```novelogic
@@ -141,16 +144,24 @@ func handle_choice(choice: String):
 ```gdscript
 signal input_started(prompt: String)
 
-func handle_input(input: Variant):
+func handle_input(input: Variant)
 ```
 
 ```novelogic
 answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+
 player: The answer is {answer}.
 
-# Custom input scene
-Player.birthday ?? "res://date_picker.tscn"
-player: My birthday is on ${Date.human_readable(Player.birthday)}.
+if answer == "42":
+    ...
+else:
+    ...
+```
+
+```gdscript
+func _on_dialogue_started(dialogue: String, who: String, mark: String):
+    dialogue = dialogue.format(Novelogic.timeline_variables)
+    ...
 ```
 
 ### Call
@@ -183,7 +194,7 @@ do_something(...)
 # await is not required
 wait_something(...)
 
-Autoload.do_something(...)
+SoundManager.play_music(...)
 ```
 
 ## Example
@@ -192,8 +203,8 @@ Autoload.do_something(...)
 
 ```novelogic
 # Declare characters used by this game.
-s = Character.new("Sylvie").color("#c8ffc8").image()
-m = Character.new("Me").color("#c8c8ff").image()
+s = Character.new("Sylvie").color("#c8ffc8").image("sylvie")
+m = Character.new("Me").color("#c8c8ff")
 
 # This is a variable that is true if you've compared a VN to a book, and false otherwise.
 book = false

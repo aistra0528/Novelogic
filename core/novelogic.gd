@@ -1,7 +1,7 @@
 extends Node
 
-signal timeline_ended
 signal timeline_started
+signal timeline_ended
 signal error_occurred(message: String, title: String)
 signal text_started(text: String)
 signal dialogue_started(dialogue: String, who: String, mark: String)
@@ -37,7 +37,7 @@ func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
 		if index_or_label is String:
 			handle_jump(index_or_label)
 			return
-		elif index_or_label is int and index_or_label < timeline.events.size():
+		if index_or_label is int and index_or_label < timeline.events.size():
 			handle_event(index_or_label, true)
 			return
 	handle_event(current_index)
@@ -106,11 +106,7 @@ func handle_event(index: int, ignore_indent: bool = false):
 					handle_next_event()
 					return
 			if event.timeline:
-				var path := current_timeline.path
-				if path.get_extension():
-					path = path.get_base_dir() + "/" + event.timeline + "." + path.get_extension()
-				else:
-					path = path.get_base_dir() + "/" + event.timeline
+				var path := current_timeline.path.get_base_dir().path_join(event.timeline + ".ntl")
 				var timeline := load_timeline(path)
 				if not timeline:
 					error = ERR_FILE_NOT_FOUND

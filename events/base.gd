@@ -1,5 +1,4 @@
 class_name TimelineEvent
-extends RefCounted
 
 enum {
 	COMMENT,
