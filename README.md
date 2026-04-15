@@ -166,18 +166,11 @@ func _on_dialogue_started(dialogue: String, who: String, mark: String):
 
 ### Call
 ```gdscript
-class_name MyExtension
-extends NovelogicExtension # Optional
+class_name CommandExtension
+extends NovelogicExtension # Access autoloads.
 
 func _init():
     Novelogic.extension = self
-
-func _get(property: StringName) -> Variant:
-    # Autoload
-    if super._get(property):
-        return super._get(property)
-    ...
-    return null
 
 func do_something(...):
     # (Novelogic.current_event as TimelineCall).auto_next = false
@@ -194,7 +187,7 @@ do_something(...)
 # await is not required
 wait_something(...)
 
-SoundManager.play_music(...)
+AudioManager.play_music(...)
 ```
 
 ## Example
@@ -213,9 +206,9 @@ book = false
 @start
 
 # Start by playing some music.
-play_music("illurock")
+bgm("illurock")
 
-scene("bg_lecturehall", "fade")
+bg("lecturehall", "fade")
 
 It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over.
 
@@ -225,7 +218,7 @@ I've had a lot of other thoughts on my mind...thoughts that culminate in a quest
 
 It's a question that I've been meaning to ask a certain someone.
 
-scene("bg_uni", "fade")
+bg("uni", "fade")
 
 When we come out of the university, I spot her right away.
 
@@ -260,7 +253,7 @@ m: Are you going home now? Wanna walk back with me?
 
 s: Sure!
 
-scene("bg_meadow", "fade")
+bg("meadow", "fade")
 
 After a short while, we reach the meadows just outside the neighborhood where we both live.
 
@@ -351,11 +344,11 @@ s: I'd love to!
 
 @marry
 
-scene("#000", "dissolve")
+bg("#000", "dissolve")
 
 And so, we become a visual novel creating duo.
 
-scene("bg_club", "dissolve")
+bg("club", "dissolve")
 
 Over the years, we make lots of games and have a lot of fun making them.
 
@@ -411,7 +404,7 @@ s.show("blue_giggle")
 
 s: You worry too much. If only this were a visual novel and I could pick an option to give you more courage!
 
-scene("#000", "dissolve")
+bg("#000", "dissolve")
 
 We get married shortly after that.
 
@@ -428,7 +421,7 @@ Together, we live happily ever after even now.
 
 I can't get up the nerve to ask right now. With a gulp, I decide to ask her later.
 
-scene("#000", "dissolve")
+bg("#000", "dissolve")
 
 But I'm an indecisive person.
 
