@@ -68,7 +68,7 @@ alice:smile: How to use marks is up to you!
 -> timeline_jump
 
 @label_jump_if_condition
--> timeline_jump ?: 1 + 1 == 2
+-> timeline_jump :: 1 + 1 == 2
 
 @timeline_jump
 -> timeline@label
@@ -136,21 +136,23 @@ func handle_choice(choice: String)
 - THE RIGHT BRANCH
     flag.right = true
     ...
-- THE MAIN ROAD ?: flag.left and flag.right
+- THE MAIN ROAD :: flag.left and flag.right
     ...
 ```
 
 ### Input
 ```gdscript
-signal input_started(prompt: String)
+signal input_started(prompt: String, default: String)
 
 func handle_input(input: Variant)
 ```
 
 ```novelogic
-answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+who ?? Input your name :: Alice
 
-player: The answer is {answer}.
+player: My name is {who}.
+
+answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
 
 if answer == "42":
     ...

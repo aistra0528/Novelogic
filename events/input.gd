@@ -1,8 +1,10 @@
-class_name TimelineInput extends TimelineEvent
+class_name TimelineInput
+extends TimelineEvent
 
 var section := ""
 var key := ""
 var prompt := ""
+var default := ""
 
 
 func process():
@@ -12,6 +14,7 @@ func process():
 	if result:
 		section = result.get_string("section")
 		key = result.get_string("key")
-		prompt = result.get_string("expression")
+		prompt = result.get_string("expr")
+		default = result.get_string("expression")
 
 	processed = true

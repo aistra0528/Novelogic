@@ -6,7 +6,7 @@ signal error_occurred(message: String, title: String)
 signal text_started(text: String)
 signal dialogue_started(dialogue: String, who: String, mark: String)
 signal choice_started(choices: PackedStringArray)
-signal input_started(prompt: String)
+signal input_started(prompt: String, default: String)
 
 var current_timeline: NovelogicTimeline = null
 var extension: Object = null
@@ -138,7 +138,8 @@ func handle_event(index: int, ignore_indent: bool = false):
 				current_indent = event.indent
 				handle_event(index + 1)
 		TimelineEvent.INPUT:
-			input_started.emit((current_event as TimelineInput).prompt)
+			var event := current_event as TimelineInput
+			input_started.emit(event.prompt, event.default)
 		_:
 			current_event.execute()
 

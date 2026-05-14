@@ -21,7 +21,7 @@ func process():
 
 
 func execute():
-	var result := Novelogic.execute_expression(expression, start_line)
+	var result := await Novelogic.execute_expression(expression, start_line)
 	if Novelogic.error:
 		return
 	var obj := (

@@ -90,8 +90,6 @@ func generate_array(path: String, placeholder: String, mark_in_context: bool, fo
 				context = "CHOICE"
 			TimelineEvent.INPUT:
 				text = (event as TimelineInput).prompt
-				if text.begins_with('"') and text.ends_with('"'):
-					continue
 				context = "PROMPT"
 		var key := text + context
 		var i := keys.find(key)
