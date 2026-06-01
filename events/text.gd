@@ -1,4 +1,5 @@
-class_name TimelineText extends TimelineEvent
+class_name ScenarioText
+extends ScenarioEvent
 
 var text := ""
 
@@ -11,5 +12,8 @@ func process():
 			text += lines[i]
 		else:
 			text += lines[i].right(-4 * indent)
-
 	processed = true
+
+
+func execute():
+	Novelogic.text_started.emit(text)

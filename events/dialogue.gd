@@ -1,5 +1,5 @@
-class_name TimelineDialogue
-extends TimelineEvent
+class_name ScenarioDialogue
+extends ScenarioEvent
 
 var who := ""
 var mark := ""
@@ -22,5 +22,8 @@ func process():
 				dialogue += lines[i]
 			else:
 				dialogue += lines[i].right(-4 * indent)
-
 	processed = true
+
+
+func execute():
+	Novelogic.dialogue_started.emit(dialogue, who, mark)

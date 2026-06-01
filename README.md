@@ -10,12 +10,12 @@ Enable Novelogic in Project Settings > Plugins.
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var timeline := Novelogic.load_timeline("/path/to/timeline.ntl")
-    Novelogic.start_timeline(timeline)
+    var scenario := Novelogic.load_scenario("res://path/to/scenario.nvs")
+    Novelogic.start_scenario(scenario)
 
 func _on_button_pressed():
-    if Novelogic.current_event is TimelineText or Novelogic.current_event is TimelineDialogue:
-        Novelogic.handle_next_event()
+    if Novelogic.current_event is ScenarioText or Novelogic.current_event is ScenarioDialogue:
+        Novelogic.next_event()
 ```
 
 Novelogic uses four spaces for indentation. Don't use tabs.
@@ -61,32 +61,32 @@ alice:smile: How to use marks is up to you!
 -> label_jump
 
 @label_call
-# Return where label/timeline called, or end the timeline.
+# Return where label/scenario called, or end the scenario.
 <-
 
 @label_jump
--> timeline_jump
+-> scenario_jump
 
 @label_jump_if_condition
--> timeline_jump :: 1 + 1 == 2
+-> scenario_jump :: 1 + 1 == 2
 
-@timeline_jump
--> timeline@label
+@scenario_jump
+-> scenario@label
 
-@timeline_call_with_variables
-<> timeline@label
+@scenario_call_with_variables
+<> scenario@label
 
 @jump_to_beginning
 -> START
 
-@end_timeline
+@end_scenario
 -> END
 
 ```
 
 ### Assignment
 ```novelogic
-# Timeline variables
+# Scenario variables
 health = 42
 health -= 3 * d(12) + 6
 game_over = health <= 0
@@ -164,11 +164,11 @@ else:
 
 ```gdscript
 func _on_dialogue_started(dialogue: String, who: String, mark: String):
-    dialogue = dialogue.format(Novelogic.timeline_variables)
+    dialogue = dialogue.format(Novelogic.scenario_variables)
     ...
 ```
 
-### Call
+### Command
 ```gdscript
 class_name CommandExtension
 extends NovelogicExtension # Access autoloads.
@@ -177,7 +177,7 @@ func _init():
     Novelogic.extension = self
 
 func do_something(...):
-    # (Novelogic.current_event as TimelineCall).auto_next = false
+    # (Novelogic.current_event as ScenarioCommand).auto_next = false
     ...
 
 func wait_something(...) -> Signal:

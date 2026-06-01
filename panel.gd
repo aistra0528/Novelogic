@@ -43,7 +43,7 @@ func _on_generate_button_pressed(format: Format):
 	if not DirAccess.dir_exists_absolute(input) or not DirAccess.dir_exists_absolute(output):
 		return
 	for file in DirAccess.get_files_at(input):
-		if file.get_extension() == "ntl":
+		if file.get_extension() == "nvs":
 			generate_file(input.path_join(file), output.path_join(file.get_basename() + extension), locale, placeholder, mark_in_context, format)
 
 
@@ -69,27 +69,27 @@ func generate_file(input: String, output: String, locale: String, placeholder: S
 
 
 func generate_array(path: String, placeholder: String, mark_in_context: bool, format: Format) -> Array[PackedStringArray]:
-	var timeline := NovelogicTimeline.from_file(path, [TimelineEvent.TEXT, TimelineEvent.DIALOGUE, TimelineEvent.CHOICE, TimelineEvent.INPUT])
-	if not timeline:
+	var scenario := NovelogicScenario.from_file(path, [ScenarioEvent.Type.TEXT, ScenarioEvent.Type.DIALOGUE, ScenarioEvent.Type.CHOICE, ScenarioEvent.Type.INPUT])
+	if not scenario:
 		return []
 	var array: Array[PackedStringArray]
 	var keys := PackedStringArray()
-	for event in timeline.events:
+	for event in scenario.events:
 		if not event.processed:
 			event.process()
 		var text: String
 		var context: String
 		match event.type:
-			TimelineEvent.TEXT:
-				text = (event as TimelineText).text
-			TimelineEvent.DIALOGUE:
-				text = (event as TimelineDialogue).dialogue
+			ScenarioEvent.Type.TEXT:
+				text = (event as ScenarioText).text
+			ScenarioEvent.Type.DIALOGUE:
+				text = (event as ScenarioDialogue).dialogue
 				context = (event.who + ":" + event.mark) if event.mark and mark_in_context else event.who
-			TimelineEvent.CHOICE:
-				text = (event as TimelineChoice).choice
+			ScenarioEvent.Type.CHOICE:
+				text = (event as ScenarioChoice).choice
 				context = "CHOICE"
-			TimelineEvent.INPUT:
-				text = (event as TimelineInput).prompt
+			ScenarioEvent.Type.INPUT:
+				text = (event as ScenarioInput).prompt
 				context = "PROMPT"
 		var key := text + context
 		var i := keys.find(key)

@@ -1,154 +1,96 @@
 extends Node
 
-signal timeline_started
-signal timeline_ended
+signal scenario_started
+signal scenario_ended
 signal error_occurred(message: String, title: String)
 signal text_started(text: String)
 signal dialogue_started(dialogue: String, who: String, mark: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String, default: String)
 
-var current_timeline: NovelogicTimeline = null
+var current_scenario: NovelogicScenario = null
 var extension: Object = null
 var current_index := 0
 var current_indent := 0
-var current_event: TimelineEvent:
+var current_event: ScenarioEvent:
 	get:
-		return current_timeline.events[current_index] if current_timeline else null
-var timeline_variables: Dictionary:
+		return current_scenario.events[current_index] if current_scenario else null
+var scenario_variables: Dictionary:
 	get:
-		return current_timeline.variables if current_timeline else { }
-var stack: Array[NovelogicTimeline] = []
+		return current_scenario.variables if current_scenario else { }
+var stack: Array[NovelogicScenario] = []
 var error := OK
 
 
-func load_timeline(path: String, include_type: Array = []) -> NovelogicTimeline:
-	return NovelogicTimeline.from_file(path, include_type)
+func load_scenario(path: String, include_type: Array = []) -> NovelogicScenario:
+	return NovelogicScenario.from_file(path, include_type)
 
 
-func start_timeline(timeline: NovelogicTimeline, index_or_label: Variant = 0):
-	if not timeline:
+func start_scenario(scenario: NovelogicScenario, index_or_label: Variant = 0):
+	if not scenario:
 		return
-	current_timeline = timeline
-	timeline_started.emit()
+	current_scenario = scenario
+	scenario_started.emit()
 	current_index = 0
 	current_indent = 0
 	if not is_same(current_index, index_or_label):
 		if index_or_label is String:
 			handle_jump(index_or_label)
 			return
-		if index_or_label is int and index_or_label < timeline.events.size():
+		if index_or_label is int and index_or_label < scenario.events.size():
 			handle_event(index_or_label, true)
 			return
 	handle_event(current_index)
 
 
-func handle_next_event(ignore_indent: bool = false):
+func next_event(ignore_indent: bool = false):
 	handle_event(current_index + 1, ignore_indent)
 
 
 func handle_event(index: int, ignore_indent: bool = false):
-	if not current_timeline:
+	if not current_scenario:
 		return
-
 	if index < 0:
 		index = 0
-	elif index >= current_timeline.events.size():
-		end_timeline()
+	elif index >= current_scenario.events.size():
+		end_scenario()
 		return
-
 	current_index = index
 
 	if ignore_indent:
 		current_indent = current_event.indent
 	elif current_indent < current_event.indent:
-		handle_next_event()
+		next_event()
 		return
 	elif current_indent > current_event.indent:
 		current_indent = current_event.indent
-		if current_event is TimelineCondition and (current_event as TimelineCondition).require_branch() != TimelineCondition.BRANCH.IF:
+		if current_event is ScenarioCondition and (current_event as ScenarioCondition).require_branch() != ScenarioCondition.BRANCH.IF:
 			while true:
 				index += 1
-				if index >= current_timeline.events.size():
-					end_timeline()
+				if index >= current_scenario.events.size():
+					end_scenario()
 					return
 
-				var event := current_timeline.events[index]
+				var event := current_scenario.events[index]
 				if current_indent < event.indent:
 					continue
 				elif current_indent > event.indent:
 					current_indent = event.indent
 
-				if event is not TimelineCondition or (event as TimelineCondition).require_branch() == TimelineCondition.BRANCH.IF:
+				if event is not ScenarioCondition or (event as ScenarioCondition).require_branch() == ScenarioCondition.BRANCH.IF:
 					current_index = index
 					break
 
 	if not current_event.processed:
 		current_event.process()
-
-	match current_event.type:
-		TimelineEvent.TEXT:
-			text_started.emit((current_event as TimelineText).text)
-		TimelineEvent.DIALOGUE:
-			var event := current_event as TimelineDialogue
-			dialogue_started.emit(event.dialogue, event.who, event.mark)
-		TimelineEvent.CHOICE:
-			var event := current_event as TimelineChoice
-			if event.is_first:
-				choice_started.emit(event.available_choices())
-			else:
-				handle_next_event()
-		TimelineEvent.JUMP:
-			var event := current_event as TimelineJump
-			if event.expression:
-				var result := execute_expression(event.expression, event.start_line)
-				if error or not result:
-					handle_next_event()
-					return
-			if event.timeline:
-				var path := current_timeline.path.get_base_dir().path_join(event.timeline + ".ntl")
-				var timeline := load_timeline(path)
-				if not timeline:
-					error = ERR_FILE_NOT_FOUND
-					error_occurred.emit(path, "Timeline not found")
-					return
-				if event.trace:
-					stack.append(current_timeline)
-					current_timeline.stack.append(current_index)
-					timeline.variables = timeline_variables
-				start_timeline(timeline, event.label)
-			else:
-				if event.trace:
-					current_timeline.stack.append(current_index)
-				handle_jump(event.label)
-		TimelineEvent.LABEL:
-			handle_next_event()
-		TimelineEvent.RETURN:
-			if current_timeline.stack.is_empty():
-				if stack.is_empty():
-					end_timeline()
-					return
-				var timeline: NovelogicTimeline = stack.pop_back()
-				timeline.variables = timeline_variables
-				current_timeline = timeline
-			index = current_timeline.stack[-1]
-			current_timeline.stack.resize(current_timeline.stack.size() - 1)
-			var event := current_timeline.events[index] as TimelineJump
-			if event and event.require_trace():
-				current_indent = event.indent
-				handle_event(index + 1)
-		TimelineEvent.INPUT:
-			var event := current_event as TimelineInput
-			input_started.emit(event.prompt, event.default)
-		_:
-			current_event.execute()
+	current_event.execute()
 
 
 func handle_choice(choice: String):
-	if current_event is not TimelineChoice:
+	if current_event is not ScenarioChoice:
 		return
 	for i in current_event.choices:
-		if choice == (current_timeline.events[i] as TimelineChoice).choice:
+		if choice == (current_scenario.events[i] as ScenarioChoice).choice:
 			current_indent += 1
 			handle_event(i + 1)
 			return
@@ -159,42 +101,42 @@ func handle_jump(label: String):
 		handle_event(0, true)
 		return
 	if label == "END":
-		end_timeline()
+		end_scenario()
 		return
-	for i in current_timeline.events.size():
-		if current_timeline.events[i] is TimelineLabel and label == (current_timeline.events[i] as TimelineLabel).require_label():
+	for i in current_scenario.events.size():
+		if current_scenario.events[i] is ScenarioLabel and label == (current_scenario.events[i] as ScenarioLabel).require_label():
 			handle_event(i, true)
 			return
 	error = ERR_DOES_NOT_EXIST
-	error_occurred.emit(current_timeline.path + "@" + label, "Label not found")
+	error_occurred.emit(current_scenario.path + "@" + label, "Label not found")
 
 
 func handle_input(input: Variant):
-	var event := current_event as TimelineInput
+	var event := current_event as ScenarioInput
 	if not event:
 		return
-	var obj := execute_expression(event.section, event.start_line) if event.section else extension if event.key in extension else timeline_variables
+	var obj := eval(event.section, event.start_line) if event.section else extension if event.key in extension else scenario_variables
 	if error:
 		return
 	obj.set(event.key, input)
-	handle_next_event()
+	next_event()
 
 
-func end_timeline():
-	current_timeline = null
+func end_scenario():
+	current_scenario = null
 	stack.clear()
-	timeline_ended.emit()
+	scenario_ended.emit()
 
 
-func execute_expression(expression: String, from_line: int) -> Variant:
+func eval(expression: String, from_line: int) -> Variant:
 	var expr := Expression.new()
-	error = expr.parse(expression, timeline_variables.keys())
+	error = expr.parse(expression, scenario_variables.keys())
 	if error:
-		error_occurred.emit(str(current_timeline.path, ":", from_line, ": ", expression), "Bad expression")
+		error_occurred.emit(str(current_scenario.path, ":", from_line, ": ", expression), "Bad expression")
 		return null
-	var result := expr.execute(timeline_variables.values(), extension)
+	var result := expr.execute(scenario_variables.values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
-		error_occurred.emit(str(current_timeline.path, ":", from_line, ": ", expression), "Execute failed")
+		error_occurred.emit(str(current_scenario.path, ":", from_line, ": ", expression), "Execute failed")
 		return null
 	return result

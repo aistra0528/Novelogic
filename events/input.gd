@@ -1,5 +1,5 @@
-class_name TimelineInput
-extends TimelineEvent
+class_name ScenarioInput
+extends ScenarioEvent
 
 var section := ""
 var key := ""
@@ -16,5 +16,8 @@ func process():
 		key = result.get_string("key")
 		prompt = result.get_string("expr")
 		default = result.get_string("expression")
-
 	processed = true
+
+
+func execute():
+	Novelogic.input_started.emit(prompt, default)

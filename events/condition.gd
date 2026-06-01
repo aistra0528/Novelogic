@@ -1,5 +1,5 @@
-class_name TimelineCondition
-extends TimelineEvent
+class_name ScenarioCondition
+extends ScenarioEvent
 
 const BRANCH := {
 	IF = "if",
@@ -19,7 +19,6 @@ func process():
 	if result:
 		branch = result.get_string("branch")
 		expression = result.get_string("expression")
-
 	processed = true
 
 
@@ -32,8 +31,8 @@ func require_branch() -> String:
 func execute():
 	match branch:
 		BRANCH.IF, BRANCH.ELIF:
-			if expression and Novelogic.execute_expression(expression, start_line):
+			if expression and Novelogic.eval(expression, start_line):
 				Novelogic.current_indent += 1
 		BRANCH.ELSE:
 			Novelogic.current_indent += 1
-	Novelogic.handle_next_event()
+	Novelogic.next_event()

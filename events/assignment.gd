@@ -1,5 +1,5 @@
-class_name TimelineAssign
-extends TimelineEvent
+class_name ScenarioAssignment
+extends ScenarioEvent
 
 var section := ""
 var key := ""
@@ -9,23 +9,24 @@ var expression := ""
 
 func process():
 	var reg := RegEx.new()
-	reg.compile(REGEX.ASSIGN.format(CAPTURE))
+	reg.compile(REGEX.ASSIGNMENT.format(CAPTURE))
 	var result := reg.search(lines[0])
 	if result:
 		section = result.get_string("section")
 		key = result.get_string("key")
 		assignment = result.get_string("assignment")
 		expression = result.get_string("expression")
-
 	processed = true
 
 
 func execute():
-	var result := await Novelogic.execute_expression(expression, start_line)
+	var result := await Novelogic.eval(expression, start_line)
 	if Novelogic.error:
 		return
 	var obj := (
-		Novelogic.execute_expression(section, start_line) if section else Novelogic.extension if key in Novelogic.extension else Novelogic.timeline_variables
+			Novelogic.eval(section, start_line) if section
+			else Novelogic.extension if key in Novelogic.extension
+			else Novelogic.scenario_variables
 	)
 	if Novelogic.error:
 		return
@@ -54,4 +55,4 @@ func execute():
 			obj.set(key, obj.get(key) << result)
 		">>=":
 			obj.set(key, obj.get(key) >> result)
-	Novelogic.handle_next_event()
+	Novelogic.next_event()

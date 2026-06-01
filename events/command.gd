@@ -1,4 +1,5 @@
-class_name TimelineCall extends TimelineEvent
+class_name ScenarioCommand
+extends ScenarioEvent
 
 var auto_next := true
 var expression := ""
@@ -13,8 +14,8 @@ func process():
 
 
 func execute():
-	await Novelogic.execute_expression(expression, start_line)
+	await Novelogic.eval(expression, start_line)
 	if Novelogic.error:
 		return
 	if Novelogic.current_event == self and auto_next:
-		Novelogic.handle_next_event()
+		Novelogic.next_event()
