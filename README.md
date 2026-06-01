@@ -114,6 +114,8 @@ when:
         ...
 
 when d(7):
+    case < 1 or case > 7:
+        Invalid day of week!
     case 1:
         Monday...
     case 2, 3, 4, 5:

@@ -32,18 +32,44 @@ func process_conditions():
 func execute():
 	if conditions.is_empty():
 		process_conditions()
-	var value := Novelogic.execute_expression(expression, start_line) if expression else true
+	var what := Novelogic.execute_expression(expression, start_line) if expression else null
 	if Novelogic.error:
 		return
+	Novelogic.timeline_variables.case = what
 	for i in conditions:
 		var event: TimelineCondition = Novelogic.current_timeline.events[i]
-		var flag := event.branch == TimelineCondition.BRANCH.ELSE
-		if not flag:
-			var cases := Novelogic.execute_expression("[%s]" % event.expression, event.start_line)
-			if Novelogic.error:
-				return
-			flag = (cases as Array).any(func(case): return case == value)
-		if flag:
+		var case: Variant = event.branch == TimelineCondition.BRANCH.ELSE
+		if not case:
+			if expression:
+				if (
+						event.expression.begins_with("==")
+						or event.expression.begins_with("!=")
+						or event.expression.begins_with(">") # >, >=
+						or event.expression.begins_with("<") # <, <=
+				):
+					var match: bool = Novelogic.execute_expression("case " + event.expression, event.start_line)
+					if Novelogic.error:
+						return
+					case = match
+				elif "," in event.expression:
+					var matches: Array = Novelogic.execute_expression("[%s]" % event.expression, event.start_line)
+					if Novelogic.error:
+						return
+					case = what in matches
+				else:
+					var match := Novelogic.execute_expression(event.expression, event.start_line)
+					if Novelogic.error:
+						return
+					case = what == match
+			else:
+				var match := Novelogic.execute_expression(event.expression, event.start_line)
+				if Novelogic.error:
+					return
+				case = match
+		if case:
+			Novelogic.timeline_variables.erase("case")
 			Novelogic.current_indent = event.indent + 1
 			Novelogic.handle_event(i + 1)
 			return
+	Novelogic.timeline_variables.erase("case")
+	Novelogic.handle_next_event()
