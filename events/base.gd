@@ -27,7 +27,7 @@ const REGEX := {
 	ASSIGNMENT = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
 	WHEN = "^{INDENT}*when( {EXPRESSION})?:$",
-	COMMAND = "^{INDENT}*{VARIABLE}\\(.*\\)$",
+	COMMAND = "^{INDENT}*({VARIABLE}\\(.*\\)|:{NAME}:( {EXPRESSION})?)$",
 	TEXT = "^{INDENT}*.+$",
 	INDENT = "^{INDENT}+",
 }
@@ -35,10 +35,10 @@ const REGEX := {
 const CAPTURE := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
-	MARK = "(?<mark>[A-Za-z0-9]\\w*)", # \w = [A-Za-z0-9_]
-	NAME = "(?<name>[A-Za-z]\\w*)",
+	MARK = "(?<mark>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
+	NAME = "(?<name>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	GOTO = "(?<goto>->|<>)",
-	WHERE = "((?<scenario>[A-Za-z]\\w*)@)?(?<label>[A-Za-z]\\w*)",
+	WHERE = "((?<scenario>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)@)?(?<label>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	VARIABLE = "((?<section>[A-Za-z]\\w*(\\.[A-Za-z_]\\w*)*)\\.)?(?<key>[A-Za-z_]\\w*)",
 	ASSIGNMENT = "(?<assignment>(\\+|-|\\*|/|\\*\\*|%|&|\\||\\^|<<|>>)?=)",
 	EXPR = "(?<expr>.+?)",

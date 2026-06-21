@@ -176,22 +176,24 @@ extends NovelogicExtension # Access autoloads.
 func _init():
     Novelogic.extension = self
 
-func do_something(...):
-    # (Novelogic.current_event as ScenarioCommand).auto_next = false
-    ...
+func wait(sec: float) -> Signal:
+    return Novelogic.get_tree().create_timer(sec).timeout
 
-func wait_something(...) -> Signal:
-    var tween := ...
-    ...
-    return tween.finished
+
+func d(sides: int) -> int:
+    return randi_range(1, sides)
 ```
 
 ```novelogic
-do_something(...)
+i = d(6)
 # await is not required
-wait_something(...)
+wait(0.5)
 
-AudioManager.play_music(...)
+AudioManager.play_music("night")
+
+# Named and Optional Arguments
+# bgm({ "value": "night", "fade": 0.5, "volume": 0.6, "loop": true })
+:bgm: "night" fade=0.5 volume=0.6 loop=true
 ```
 
 ## Example
@@ -212,7 +214,7 @@ book = false
 # Start by playing some music.
 bgm("illurock")
 
-bg("lecturehall", "fade")
+:bg: "lecturehall" trans="fade"
 
 It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over.
 
@@ -222,7 +224,7 @@ I've had a lot of other thoughts on my mind...thoughts that culminate in a quest
 
 It's a question that I've been meaning to ask a certain someone.
 
-bg("uni", "fade")
+:bg: "uni" trans="fade"
 
 When we come out of the university, I spot her right away.
 
@@ -257,7 +259,7 @@ m: Are you going home now? Wanna walk back with me?
 
 s: Sure!
 
-bg("meadow", "fade")
+:bg: "meadow" trans="fade"
 
 After a short while, we reach the meadows just outside the neighborhood where we both live.
 
@@ -348,11 +350,11 @@ s: I'd love to!
 
 @marry
 
-bg("#000", "dissolve")
+:bg: "#000000" trans="dissolve"
 
 And so, we become a visual novel creating duo.
 
-bg("club", "dissolve")
+:bg: "club" trans="dissolve"
 
 Over the years, we make lots of games and have a lot of fun making them.
 
@@ -408,7 +410,7 @@ s.show("blue_giggle")
 
 s: You worry too much. If only this were a visual novel and I could pick an option to give you more courage!
 
-bg("#000", "dissolve")
+:bg: "#000000" trans="dissolve"
 
 We get married shortly after that.
 
@@ -425,7 +427,7 @@ Together, we live happily ever after even now.
 
 I can't get up the nerve to ask right now. With a gulp, I decide to ask her later.
 
-bg("#000", "dissolve")
+:bg: "#000000" trans="dissolve"
 
 But I'm an indecisive person.
 
