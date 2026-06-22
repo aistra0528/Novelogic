@@ -192,7 +192,6 @@ wait(0.5)
 AudioManager.play_music("night")
 
 # Named and Optional Arguments
-# bgm({ "value": "night", "fade": 0.5, "volume": 0.6, "loop": true })
 :bgm: "night" fade=0.5 volume=0.6 loop=true
 ```
 

@@ -9,18 +9,48 @@ func _split(str: String) -> PackedStringArray:
 	var array: PackedStringArray
 	var current := ""
 	var in_quotes := false
+	var escaping := false
 	for ch in str:
 		if ch == " " and not in_quotes:
 			if current:
 				array.append(current)
 				current = ""
-		else:
-			if ch == '"':
-				in_quotes = !in_quotes
-			current += ch
+			continue
+		elif escaping:
+			escaping = false
+		elif ch == "\\":
+			escaping = true
+		elif ch == '"':
+			in_quotes = !in_quotes
+		current += ch
 	if current:
 		array.append(current)
 	return array
+
+
+func _unname(method: StringName, named_args: Dictionary) -> PackedStringArray:
+	if Novelogic.extension:
+		for item in Novelogic.extension.get_method_list():
+			if item.name == method:
+				var args: Dictionary
+				var defaults: Array = item.default_args
+				for arg in item.args:
+					args[arg.name] = null
+				var keys: Array = args.keys()
+				for i in range(args.size() - 1, -1, -1):
+					if defaults.is_empty():
+						break
+					args[keys[i]] = defaults.pop_back()
+				if named_args.has(0):
+					args[keys[0]] = named_args[0]
+				for key in named_args:
+					if key in args:
+						args[key] = named_args[key]
+				for key in args:
+					if args[key] is not VarString:
+						args[key] = var_to_str(args[key])
+				return args.values()
+	return [str(named_args)]
 
 
 func process():
@@ -31,14 +61,15 @@ func process():
 	if expression.begins_with(":"):
 		var i := expression.find(" ", 2)
 		if i != -1:
-			var dict: Dictionary
+			var method := expression.substr(1, i - 2)
+			var named_args: Dictionary
 			for pair in _split(expression.right(-i - 1)):
 				var j := pair.find("=")
 				if j != -1:
-					dict[pair.left(j)] = Value.new(pair.right(-j - 1))
+					named_args[pair.left(j)] = VarString.new(pair.right(-j - 1))
 				else:
-					dict["value"] = Value.new(pair)
-			expression = str(expression.substr(1, i - 2), "(", dict, ")")
+					named_args[0] = VarString.new(pair)
+			expression = "%s(%s)" % [method, ", ".join(_unname(method, named_args))]
 		else:
 			expression = expression.substr(1, expression.length() - 2) + "()"
 	processed = true
@@ -52,13 +83,13 @@ func execute():
 		Novelogic.next_event()
 
 
-class Value:
-	var _value: String
+class VarString:
+	var _str: String
 
 
-	func _init(value: String):
-		_value = value
+	func _init(str: String):
+		_str = str
 
 
 	func _to_string() -> String:
-		return _value
+		return _str
