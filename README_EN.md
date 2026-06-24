@@ -7,6 +7,8 @@ Create interactive fictions and visual novels in your Godot game.
 
 ## Get Started
 
+[Download from here](https://github.com/aistra0528/Novelogic/archive/refs/heads/main.zip) and unzip it to the `res://addons` folder.
+
 Enable Novelogic in **Project Settings** > **Plugins**.
 
 ```gdscript
@@ -65,7 +67,7 @@ Alice:smile: How to use marks is up to you!
 -> JumpToLabel
 
 @CallLabel
-# Return where label/scenario called, or end the scenario.
+# Return where label/scenario called, or end the scenario
 <-
 
 @JumpToLabel
