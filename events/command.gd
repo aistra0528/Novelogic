@@ -61,7 +61,7 @@ func process():
 	if expression.begins_with(":"):
 		var i := expression.find(" ", 2)
 		if i != -1:
-			var method := expression.substr(1, i - 2)
+			var method := expression.substr(1, i - 2).to_snake_case()
 			var named_args: Dictionary
 			for pair in _split(expression.right(-i - 1)):
 				var j := pair.find("=")
@@ -71,7 +71,7 @@ func process():
 					named_args[0] = VarString.new(pair)
 			expression = "%s(%s)" % [method, ", ".join(_unname(method, named_args))]
 		else:
-			expression = expression.substr(1, expression.length() - 2) + "()"
+			expression = expression.substr(1, expression.length() - 2).to_snake_case() + "()"
 	processed = true
 
 

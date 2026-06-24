@@ -44,8 +44,8 @@ func execute():
 				if (
 						event.expression.begins_with("==")
 						or event.expression.begins_with("!=")
-						or event.expression.begins_with(">") # >, >=
 						or event.expression.begins_with("<") # <, <=
+						or event.expression.begins_with(">") # >, >=
 				):
 					var match: bool = Novelogic.eval("case " + event.expression, event.start_line)
 					if Novelogic.error:

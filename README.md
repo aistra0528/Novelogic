@@ -1,16 +1,18 @@
+简体中文 | [English](README_EN.md)
+
 # Novelogic
-Create interactive fictions and visual novels in your Godot game.
+为你的 Godot 游戏编写互动小说和视觉小说剧本。
 
-[VSC Extension](https://github.com/aistra0528/novelogic-vsc-extension)
+[VSC 扩展](https://github.com/aistra0528/novelogic-vsc-extension)
 
-## Get Started
+## 快速开始
 
-Enable Novelogic in Project Settings > Plugins.
+在 **项目设置** > **插件** 中启用 Novelogic。
 
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var scenario := Novelogic.load_scenario("res://path/to/scenario.nvs")
+    var scenario := Novelogic.load_scenario("res://path/to/剧本.nvs")
     Novelogic.start_scenario(scenario)
 
 func _on_button_pressed():
@@ -18,84 +20,89 @@ func _on_button_pressed():
         Novelogic.next_event()
 ```
 
-Novelogic uses four spaces for indentation. Don't use tabs.
+Novelogic剧本 `*.nvs` 文件使用4个空格缩进，不支持制表符。
 
-### Text
+导出项目时，请在 **资源** 中导出 Novelogic剧本 `*.nvs` 文件。
+
+
+### 文本
 
 ```gdscript
 signal text_started(text: String)
 ```
 
 ```novelogic
-This is a single line text.
+这是一行文本。
 
-This is a
-multiline
-text.
+这是
+多行
+文本。
 ```
 
-### Dialogue
+### 对话
 
 ```gdscript
 signal dialogue_started(dialogue: String, who: String, mark: String)
 ```
 
 ```novelogic
-bob: This is a single line dialogue.
+爱丽丝: 这是一行对话。
 
-bob: This is a
-multiline
-dialogue.
+爱丽丝: 这是
+多行
+对话。
 
-alice:voice_01: Can you hear me?
+爱丽丝:语音_01: 能听见吗？
 
-alice:1godotresuid: It also works!
+爱丽丝:1godotresuid: 这样也行！
 
-alice:smile: How to use marks is up to you!
+爱丽丝:微笑: 爱怎么用就怎么用！
 ```
 
-### Label
+### 标签
 ```novelogic
-@label
-<> label_call
--> label_jump
+@标签
+<> 调用标签
+-> 跳转标签
 
-@label_call
-# Return where label/scenario called, or end the scenario.
+@调用标签
+# 返回标签或剧本调用处，否则结束剧本
 <-
 
-@label_jump
--> scenario_jump
+@跳转标签
+-> 跳转剧本
 
-@label_jump_if_condition
--> scenario_jump :: 1 + 1 == 2
+@满足条件时跳转
+-> 跳转剧本 :: 1 + 1 == 2
 
-@scenario_jump
--> scenario@label
+@跳转剧本
+-> 剧本@标签
 
-@scenario_call_with_variables
-<> scenario@label
+@调用剧本附带变量
+<> 剧本@标签
 
-@jump_to_beginning
+@跳转开头
 -> START
 
-@end_scenario
+@结束剧本
 -> END
 
 ```
 
-### Assignment
+### 赋值
 ```novelogic
-# Scenario variables
+# 剧本变量
 health = 42
 health -= 3 * d(12) + 6
 game_over = health <= 0
 
-# Extension variables
+# 扩展变量
 GameState.good_ending = true
 ```
 
-### Condition
+支持 `=` `+=` `-=` `*=` `/=` `**=` `%=` `&=` `|=` `^=` `<<=` `>>=`。
+
+### 条件
 ```novelogic
 roll = d(6)
 if roll == 6:
@@ -115,16 +122,18 @@ when:
 
 when d(7):
     case < 1 or case > 7:
-        Invalid day of week!
+        有哪里不对……
     case 1:
-        Monday...
+        是星期一……
     case 2, 3, 4, 5:
-        Tuesday, Wednesday, Thursday, Friday.
+        是星期二、星期三、星期四或星期五。
     else:
-        Saturday, Sunday!
+        是星期六或星期天！
 ```
 
-### Choice
+`when` 带参数时，以 `==` `!=` `<` `<=` `>` `>=` 开头的 `case` 被视为表达式。
+
+### 选项
 ```gdscript
 signal choice_started(choices: PackedStringArray)
 
@@ -132,17 +141,24 @@ func handle_choice(choice: String)
 ```
 
 ```novelogic
-- THE LEFT BRANCH
+- 走左边的路
     flag.left = true
     ...
-- THE RIGHT BRANCH
+- 走右边的路
     flag.right = true
     ...
-- THE MAIN ROAD :: flag.left and flag.right
+- 走中间的路 :: flag.left and flag.right
     ...
+
+- 我没得选
+- 我没得选
+- 我没得选
+...
 ```
 
-### Input
+`choices` 为可用的选项。如需获取全部选项，请使用 `(Novelogic.current_event as ScenarioChoice).all_choices()`。
+
+### 输入
 ```gdscript
 signal input_started(prompt: String, default: String)
 
@@ -150,11 +166,11 @@ func handle_input(input: Variant)
 ```
 
 ```novelogic
-who ?? Input your name :: Alice
+who ?? 请输入你的名字 :: 爱丽丝
 
-player: My name is {who}.
+玩家: 我的名字是{who}。
 
-answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+answer ?? 生命、宇宙和万物的终极答案
 
 if answer == "42":
     ...
@@ -168,274 +184,42 @@ func _on_dialogue_started(dialogue: String, who: String, mark: String):
     ...
 ```
 
-### Command
+`input` 的类型为 `Variant`，不限于文本。
+
+### 函数与指令
 ```gdscript
 class_name CommandExtension
-extends NovelogicExtension # Access autoloads.
+extends NovelogicExtension # 访问全局自动加载节点（可选）
 
 func _init():
     Novelogic.extension = self
 
-func wait(sec: float) -> Signal:
-    return Novelogic.get_tree().create_timer(sec).timeout
-
-
 func d(sides: int) -> int:
     return randi_range(1, sides)
+
+func wait_time(time: float) -> Signal:
+    return Novelogic.get_tree().create_timer(time).timeout
+
+
+func 等待结束(tween: Tween) -> Signal:
+    return tween.finished
 ```
 
 ```novelogic
 i = d(6)
-# await is not required
-wait(0.5)
+# 无需 await
+wait_time(0.5)
 
-AudioManager.play_music("night")
+AudioManager.play_music("夜晚")
 
-# Named and Optional Arguments
-:bgm: "night" fade=0.5 volume=0.6 loop=true
+# 支持 Unicode 标识符、命名与可选参数
+:背景音乐: "夜晚" 淡入时间=0.5 音量=0.6 循环=true
 ```
 
-## Example
+#### `:指令:` 提示
 
-[Ren'Py Script of _The Question_](https://www.renpy.org/doc/html/thequestion.html) ported to Novelogic.
+- 指令调用 `snake_case` 的函数。如 `:WaitTime: 0.5` 等价于 `wait_time(0.5)`。
 
-```novelogic
-# Declare characters used by this game.
-s = Character.new("Sylvie").color("#c8ffc8").image("sylvie")
-m = Character.new("Me").color("#c8c8ff")
+- 支持变量与函数。如 `:等待结束: tween` 等价于 `等待结束(tween)`。
 
-# This is a variable that is true if you've compared a VN to a book, and false otherwise.
-book = false
-
-# The game starts here.
-@start
-
-# Start by playing some music.
-bgm("illurock")
-
-:bg: "lecturehall" trans="fade"
-
-It's only when I hear the sounds of shuffling feet and supplies being put away that I realize that the lecture's over.
-
-Professor Eileen's lectures are usually interesting, but today I just couldn't concentrate on it.
-
-I've had a lot of other thoughts on my mind...thoughts that culminate in a question.
-
-It's a question that I've been meaning to ask a certain someone.
-
-:bg: "uni" trans="fade"
-
-When we come out of the university, I spot her right away.
-
-s.show("green_normal", "dissolve")
-
-I've known Sylvie since we were kids. She's got a big heart and she's always been a good friend to me.
-
-But recently... I've felt that I want something more.
-
-More than just talking, more than just walking home together when our classes end.
-
-As soon as she catches my eye, I decide...
-
-- To ask her right away.
-    -> rightaway
-
-- To ask her later.
-    -> later
-
-
-@rightaway
-
-s.show("green_smile")
-
-s: Hi there! How was class?
-
-m: Good...
-
-I can't bring myself to admit that it all went in one ear and out the other.
-
-m: Are you going home now? Wanna walk back with me?
-
-s: Sure!
-
-:bg: "meadow" trans="fade"
-
-After a short while, we reach the meadows just outside the neighborhood where we both live.
-
-It's a scenic view I've grown used to. Autumn is especially beautiful here.
-
-When we were children, we played in these meadows a lot, so they're full of memories.
-
-m: Hey... Umm...
-
-s.show("green_smile", "dissolve")
-
-She turns to me and smiles. She looks so welcoming that I feel my nervousness melt away.
-
-I'll ask her...!
-
-m: Ummm... Will you...
-
-m: Will you be my artist for a visual novel?
-
-s.show("green_surprised")
-
-Silence.
-
-She looks so shocked that I begin to fear the worst. But then...
-
-s.show("green_smile")
-
-s: Sure, but what's a "visual novel?"
-
-- It's a videogame.
-    -> game
-
-- It's an interactive book.
-    -> book
-
-
-@game
-
-m: It's a kind of videogame you can play on your computer or a console.
-
-m: Visual novels tell a story with pictures and music.
-
-m: Sometimes, you also get to make choices that affect the outcome of the story.
-
-s: So it's like those choose-your-adventure books?
-
-m: Exactly! I've got lots of different ideas that I think would work.
-
-m: And I thought maybe you could help me...since I know how you like to draw.
-
-m: It'd be hard for me to make a visual novel alone.
-
-s.show("green_normal")
-
-s: Well, sure! I can try. I just hope I don't disappoint you.
-
-m: You know you could never disappoint me, Sylvie.
-
--> marry
-
-
-@book
-
-book = true
-
-m: It's like an interactive book that you can read on a computer or a console.
-
-s.show("green_surprised")
-
-s: Interactive?
-
-m: You can make choices that lead to different events and endings in the story.
-
-s: So where does the "visual" part come in?
-
-m: Visual novels have pictures and even music, sound effects, and sometimes voice acting to go along with the text.
-
-s.show("green_smile")
-
-s: I see! That certainly sounds like fun. I actually used to make webcomics way back when, so I've got lots of story ideas.
-
-m: That's great! So...would you be interested in working with me as an artist?
-
-s: I'd love to!
-
--> marry
-
-
-@marry
-
-:bg: "#000000" trans="dissolve"
-
-And so, we become a visual novel creating duo.
-
-:bg: "club" trans="dissolve"
-
-Over the years, we make lots of games and have a lot of fun making them.
-
-if book:
-
-    Our first game is based on one of Sylvie's ideas, but afterwards I get to come up with stories of my own, too.
-
-We take turns coming up with stories and characters and support each other to make some great games!
-
-And one day...
-
-s.show("blue_normal", "dissolve")
-
-s: Hey...
-
-m: Yes?
-
-s.show("blue_giggle")
-
-s: Will you marry me?
-
-m: What? Where did this come from?
-
-s.show("blue_surprised")
-
-s: Come on, how long have we been dating?
-
-m: A while...
-
-s.show("blue_smile")
-
-s: These last few years we've been making visual novels together, spending time together, helping each other...
-
-s: I've gotten to know you and care about you better than anyone else. And I think the same goes for you, right?
-
-m: Sylvie...
-
-s.show("blue_giggle")
-
-s: But I know you're the indecisive type. If I held back, who knows when you'd propose?
-
-s.show("blue_normal")
-
-s: So will you marry me?
-
-m: Of course I will! I've actually been meaning to propose, honest!
-
-s: I know, I know.
-
-m: I guess... I was too worried about timing. I wanted to ask the right question at the right time.
-
-s.show("blue_giggle")
-
-s: You worry too much. If only this were a visual novel and I could pick an option to give you more courage!
-
-:bg: "#000000" trans="dissolve"
-
-We get married shortly after that.
-
-Our visual novel duo lives on even after we're married...and I try my best to be more decisive.
-
-Together, we live happily ever after even now.
-
-[b]Good Ending[/b].
-
--> END
-
-
-@later
-
-I can't get up the nerve to ask right now. With a gulp, I decide to ask her later.
-
-:bg: "#000000" trans="dissolve"
-
-But I'm an indecisive person.
-
-I couldn't ask her that day and I end up never being able to ask her.
-
-I guess I'll never know the answer to my question now...
-
-[b]Bad Ending[/b].
-
--> END
-
-```
+- 最后一个匿名参数将作为函数的首个参数。如 `:背景音乐: "白天" 淡入时间=0.5 "夜晚"` 等价于 `背景音乐("夜晚", 0.5)`。

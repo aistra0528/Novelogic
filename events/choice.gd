@@ -43,6 +43,16 @@ func process_choices():
 		choices.append(i)
 
 
+func all_choices() -> PackedStringArray:
+	if choices.is_empty():
+		process_choices()
+	var all_choices := PackedStringArray()
+	for i in choices:
+		var event: ScenarioChoice = Novelogic.current_scenario.events[i]
+		all_choices.append(event.choice)
+	return all_choices
+
+
 func available_choices() -> PackedStringArray:
 	if choices.is_empty():
 		process_choices()
