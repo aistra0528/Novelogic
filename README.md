@@ -44,21 +44,19 @@ signal text_started(text: String)
 ### 对话
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
 ```
 
 ```novelogic
 爱丽丝: 这是一行对话。
 
-爱丽丝: 这是
+爱丽丝@微笑: 这是
 多行
 对话。
 
 爱丽丝:语音_01: 能听见吗？
 
-爱丽丝:1godotresuid: 这样也行！
-
-爱丽丝:微笑: 爱怎么用就怎么用！
+爱丽丝@微笑:1godotresuid: 这样也行！
 ```
 
 ### 标签
@@ -214,7 +212,7 @@ wait_time(0.5)
 
 AudioManager.play_music("夜晚")
 
-# 支持 Unicode 标识符、命名与可选参数
+# 支持命名与可选参数
 :背景音乐: "夜晚" 淡入时间=0.5 音量=0.6 循环=true
 ```
 

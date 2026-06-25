@@ -18,7 +18,7 @@ enum Type {
 
 const REGEX := {
 	COMMENT = "^{INDENT}*{COMMENT}$",
-	DIALOGUE = "^{INDENT}*{NAME}:({MARK}:)? {EXPRESSION}$",
+	DIALOGUE = "^{INDENT}*{NAME}(@{WHAT})?:({MARK}:)? {EXPRESSION}$",
 	CHOICE = "^{INDENT}*- {EXPR}( :: {EXPRESSION})?$",
 	JUMP = "^{INDENT}*{GOTO} {WHERE}( :: {EXPRESSION})?$",
 	LABEL = "^{INDENT}*@{NAME}$",
@@ -35,11 +35,12 @@ const REGEX := {
 const CAPTURE := {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
+	WHAT = "(?<what>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	MARK = "(?<mark>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	NAME = "(?<name>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	GOTO = "(?<goto>->|<>)",
 	WHERE = "((?<scenario>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)@)?(?<label>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
-	VARIABLE = "((?<section>[A-Za-z]\\w*(\\.[A-Za-z_]\\w*)*)\\.)?(?<key>[A-Za-z_]\\w*)",
+	VARIABLE = "((?<section>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*(\\.([A-Za-z_]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)*)\\.)?(?<key>([A-Za-z_]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	ASSIGNMENT = "(?<assignment>(\\+|-|\\*|/|\\*\\*|%|&|\\||\\^|<<|>>)?=)",
 	EXPR = "(?<expr>.+?)",
 	EXPRESSION = "(?<expression>.+)",

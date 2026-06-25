@@ -43,21 +43,19 @@ text.
 ### Dialogues
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
 ```
 
 ```novelogic
 Alice: This is a single line dialogue.
 
-Alice: This is a
+Alice@smile: This is a
 multiline
 dialogue.
 
 Alice:voice_01: Can you hear me?
 
-Alice:1godotresuid: It also works!
-
-Alice:smile: How to use marks is up to you!
+Alice@smile:1godotresuid: It also works!
 ```
 
 ### Labels
@@ -212,7 +210,7 @@ wait_time(0.5)
 
 AudioManager.play_music("night")
 
-# Support Unicode identifiers, named and optional arguments
+# Support named and optional arguments
 :Bgm: "night" fade_time=0.5 volume=0.6 loop=true
 ```
 

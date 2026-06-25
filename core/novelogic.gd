@@ -4,7 +4,7 @@ signal scenario_started
 signal scenario_ended
 signal error_occurred(message: String, title: String)
 signal text_started(text: String)
-signal dialogue_started(dialogue: String, who: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String, default: String)
 
