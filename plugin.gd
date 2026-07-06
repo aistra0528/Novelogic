@@ -1,8 +1,8 @@
 @tool
 extends EditorPlugin
 
-const PLUGIN_NAME := "Novelogic"
-const AUTOLOAD_PATH := "res://addons/novelogic/core/novelogic.gd"
+const PLUGIN_NAME = "Novelogic"
+const AUTOLOAD_PATH = "res://addons/novelogic/core/novelogic.gd"
 
 var panel: Control
 
@@ -26,7 +26,7 @@ func _exit_tree():
 		panel.queue_free()
 
 
-func _has_main_screen():
+func _has_main_screen() -> bool:
 	return true
 
 
@@ -35,9 +35,9 @@ func _make_visible(visible):
 		panel.visible = visible
 
 
-func _get_plugin_name():
+func _get_plugin_name() -> String:
 	return PLUGIN_NAME
 
 
-func _get_plugin_icon():
+func _get_plugin_icon() -> Texture2D:
 	return EditorInterface.get_editor_theme().get_icon("Translation", "EditorIcons")

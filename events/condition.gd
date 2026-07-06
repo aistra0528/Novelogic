@@ -1,7 +1,7 @@
 class_name ScenarioCondition
 extends ScenarioEvent
 
-const BRANCH := {
+const BRANCH = {
 	IF = "if",
 	ELIF = "elif",
 	CASE = "case",

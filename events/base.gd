@@ -16,7 +16,7 @@ enum Type {
 	TEXT,
 }
 
-const REGEX := {
+const REGEX = {
 	COMMENT = "^{INDENT}*{COMMENT}$",
 	DIALOGUE = "^{INDENT}*{NAME}(@{WHAT})?:({MARK}:)? {EXPRESSION}$",
 	CHOICE = "^{INDENT}*- {EXPR}( :: {EXPRESSION})?$",
@@ -32,7 +32,7 @@ const REGEX := {
 	INDENT = "^{INDENT}+",
 }
 
-const CAPTURE := {
+const CAPTURE = {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
 	WHAT = "(?<what>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",

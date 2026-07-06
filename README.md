@@ -7,7 +7,7 @@
 
 ## 快速开始
 
-[从此下载](https://github.com/aistra0528/Novelogic/archive/refs/heads/main.zip)并将其解压至 `res://addons` 目录。
+[从此下载](https://github.com/aistra0528/Novelogic/archive/refs/heads/main.zip) 并将其解压至 `res://addons` 目录。
 
 在 **项目设置** > **插件** 中启用 Novelogic。
 
