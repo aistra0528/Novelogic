@@ -179,7 +179,7 @@ else:
 ```
 
 ```gdscript
-func _on_dialogue_started(dialogue: String, who: String, mark: String):
+func _on_dialogue_started(dialogue: String, who: String, what: String, mark: String):
     dialogue = dialogue.format(Novelogic.scenario_variables)
     ...
 ```
