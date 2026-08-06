@@ -6,26 +6,28 @@ var expression := ""
 
 
 func _split(str: String) -> PackedStringArray:
-	var array: PackedStringArray
-	var current := ""
-	var in_quotes := false
+	var pairs: PackedStringArray
+	var pair := ""
+	var quote := ""
 	var escaping := false
-	for ch in str:
-		if ch == " " and not in_quotes:
-			if current:
-				array.append(current)
-				current = ""
+	for c in str:
+		if c == " " and quote.is_empty():
+			if pair:
+				pairs.append(pair)
+				pair = ""
 			continue
 		elif escaping:
 			escaping = false
-		elif ch == "\\":
+		elif c == "\\":
 			escaping = true
-		elif ch == '"':
-			in_quotes = !in_quotes
-		current += ch
-	if current:
-		array.append(current)
-	return array
+		elif c == quote:
+			quote = ""
+		elif c == '"' or c == "'":
+			quote = c
+		pair += c
+	if pair:
+		pairs.append(pair)
+	return pairs
 
 
 func _unname(method: StringName, named_args: Dictionary) -> PackedStringArray:
