@@ -1,20 +1,20 @@
-简体中文 | [English](README_EN.md)
+English | [简体中文](README.zh_CN.md)
 
 # Novelogic
-为你的 Godot 游戏编写互动小说和视觉小说剧本。
+Create interactive fictions and visual novels in your Godot game.
 
-[VSC 扩展](https://github.com/aistra0528/novelogic-vsc-extension)
+[VSC Extension](https://github.com/aistra0528/novelogic-vsc-extension)
 
-## 快速开始
+## Get Started
 
-[从此下载](https://github.com/aistra0528/Novelogic/archive/refs/heads/main.zip) 并将其解压至 `res://addons` 目录。
+[Download from here](https://github.com/aistra0528/Novelogic/archive/refs/heads/main.zip) and unzip it to the `res://addons` folder.
 
-在 **项目设置** > **插件** 中启用 Novelogic。
+Enable Novelogic in **Project Settings** > **Plugins**.
 
 ```gdscript
 func _ready():
     # Novelogic.signal_name.connect(...)
-    var scenario := Novelogic.load_scenario("res://path/to/剧本.nvs")
+    var scenario := Novelogic.load_scenario("res://path/to/scenario.nvs")
     Novelogic.start_scenario(scenario)
 
 func _on_button_pressed():
@@ -22,87 +22,86 @@ func _on_button_pressed():
         Novelogic.next_event()
 ```
 
-Novelogic剧本 `*.nvs` 文件使用4个空格缩进，不支持制表符。
+NovelogicScenario `*.nvs` files uses four spaces for indentation. DO NOT use tabs.
 
-导出项目时，请在 **资源** 中导出 Novelogic剧本 `*.nvs` 文件。
+Export NovelogicScenario `*.nvs` files in **Resources** before you export your project.
 
-
-### 文本
+### Texts
 
 ```gdscript
 signal text_started(text: String)
 ```
 
 ```novelogic
-这是一行文本。
+This is a single line text.
 
-这是
-多行
-文本。
+This is a
+multiline
+text.
 ```
 
-### 对话
+### Dialogues
 
 ```gdscript
 signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
 ```
 
 ```novelogic
-爱丽丝: 这是一行对话。
+Alice: This is a single line dialogue.
 
-爱丽丝@微笑: 这是
-多行
-对话。
+Alice@smile: This is a
+multiline
+dialogue.
 
-爱丽丝:语音_01: 能听见吗？
+Alice:voice_01: Can you hear me?
 
-爱丽丝@微笑:1godotresuid: 这样也行！
+Alice@smile:1godotresuid: It also works!
 ```
 
-### 标签
+### Labels
 ```novelogic
-@标签
-<> 调用标签
--> 跳转标签
+@Label
+<> CallLabel
+-> JumpToLabel
 
-@调用标签
-# 返回标签或剧本调用处，否则结束剧本
+@CallLabel
+# Return where label/scenario called, or end the scenario
 <-
 
-@跳转标签
--> 跳转剧本
+@JumpToLabel
+-> JumpToScenario
 
-@满足条件时跳转
--> 跳转剧本 :: 1 + 1 == 2
+@JumpIfCondition
+-> JumpToScenario :: 1 + 1 == 2
 
-@跳转剧本
--> 剧本@标签
+@JumpToScenario
+-> scenario@Label
 
-@调用剧本附带变量
-<> 剧本@标签
+@CallScenarioWithVariables
+<> scenario@Label
 
-@跳转开头
+@JumpToBeginning
 -> START
 
-@结束剧本
+@EndScenario
 -> END
 
 ```
 
-### 赋值
+### Assignments
 ```novelogic
-# 剧本变量
+# Scenario variables
 health = 42
 health -= 3 * d(12) + 6
 game_over = health <= 0
 
-# 扩展变量
+# Extension variables
 GameState.good_ending = true
 ```
 
-支持 `=` `+=` `-=` `*=` `/=` `**=` `%=` `&=` `|=` `^=` `<<=` `>>=`。
+Support `=` `+=` `-=` `*=` `/=` `**=` `%=` `&=` `|=` `^=` `<<=` `>>=`.
 
-### 条件
+### Conditions
 ```novelogic
 roll = d(6)
 if roll == 6:
@@ -122,18 +121,18 @@ when:
 
 when d(7):
     case < 1 or case > 7:
-        有哪里不对……
+        Something went wrong...
     case 1:
-        是星期一……
+        Monday...
     case 2, 3, 4, 5:
-        是星期二、星期三、星期四或星期五。
+        Tuesday, Wednesday, Thursday, Friday.
     else:
-        是星期六或星期天！
+        Saturday, Sunday!
 ```
 
-`when` 带参数时，以 `==` `!=` `<` `<=` `>` `>=` 开头的 `case` 被视为表达式。
+When `when` has an argument, `case`s that start with `==` `!=` `<` `<=` `>` `>=` are treated as expressions.
 
-### 选项
+### Choices
 ```gdscript
 signal choice_started(choices: PackedStringArray)
 
@@ -141,24 +140,24 @@ func handle_choice(choice: String)
 ```
 
 ```novelogic
-- 走左边的路
+- THE LEFT BRANCH
     flag.left = true
     ...
-- 走右边的路
+- THE RIGHT BRANCH
     flag.right = true
     ...
-- 走中间的路 :: flag.left and flag.right
+- THE MAIN ROAD :: flag.left and flag.right
     ...
 
-- 我没得选
-- 我没得选
-- 我没得选
+- I have no choice
+- I have no choice
+- I have no choice
 ...
 ```
 
-`choices` 为可用的选项。如需获取全部选项，请使用 `(Novelogic.current_event as ScenarioChoice).all_choices()`。
+`choices` are the available choices. To get all choices, use `(Novelogic.current_event as ScenarioChoice).all_choices()`.
 
-### 输入
+### Inputs
 ```gdscript
 signal input_started(prompt: String, default: String)
 
@@ -166,11 +165,11 @@ func handle_input(input: Variant)
 ```
 
 ```novelogic
-who ?? 请输入你的名字 :: 爱丽丝
+who ?? Input your name :: Alice
 
-玩家: 我的名字是{who}。
+Player: My name is {who}.
 
-answer ?? 生命、宇宙和万物的终极答案
+answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
 
 if answer == "42":
     ...
@@ -184,12 +183,12 @@ func _on_dialogue_started(dialogue: String, who: String, what: String, mark: Str
     ...
 ```
 
-`input` 的类型为 `Variant`，不限于文本。
+`input` type is `Variant`, not limited to texts.
 
-### 函数与指令
+### Functions and Commands
 ```gdscript
 class_name CommandExtension
-extends NovelogicExtension # 访问全局自动加载节点（可选）
+extends NovelogicExtension # (Optional) Access autoloads
 
 func _init():
     Novelogic.extension = self
@@ -200,26 +199,25 @@ func d(sides: int) -> int:
 func wait_time(time: float) -> Signal:
     return Novelogic.get_tree().create_timer(time).timeout
 
-
-func 等待结束(tween: Tween) -> Signal:
+func wait_finish(tween: Tween) -> Signal:
     return tween.finished
 ```
 
 ```novelogic
 i = d(6)
-# 无需 await
+# await is not required
 wait_time(0.5)
 
-AudioManager.play_music("夜晚")
+AudioManager.play_music("night")
 
-# 支持命名与可选参数
-:背景音乐: "夜晚" 淡入时间=0.5 音量=0.6 循环=true
+# Support named and optional arguments
+:bgm: "night" fade_time=0.5 volume=0.6 loop=true
 ```
 
-#### `:指令:` 提示
+#### `:command:` Tips
 
-- 指令调用 `snake_case` 的函数。如 `:WaitTime: 0.5` 等价于 `wait_time(0.5)`。
+- The command calls the `snake_case` function. e.g. `:waitTime: 0.5` means `wait_time(0.5)`.
 
-- 支持变量与函数。如 `:等待结束: tween` 等价于 `等待结束(tween)`。
+- Support variables and functions. e.g. `:waitFinish: tween=t` means `wait_finish(t)`.
 
-- 最后一个匿名参数将作为函数的首个参数。如 `:背景音乐: "白天" 淡入时间=0.5 "夜晚"` 等价于 `背景音乐("夜晚", 0.5)`。
+- Only the first unnamed argument will be the first argument of the function. e.g. `:bgm: "night" fade_time=0.5 "day"` means `bgm("night", 0.5)`.

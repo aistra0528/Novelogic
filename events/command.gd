@@ -69,7 +69,7 @@ func process():
 				var j := pair.find("=")
 				if j != -1:
 					named_args[pair.left(j)] = VarString.new(pair.right(-j - 1))
-				else:
+				elif 0 not in named_args:
 					named_args[0] = VarString.new(pair)
 			expression = "%s(%s)" % [method, ", ".join(_unname(method, named_args))]
 		else:
