@@ -196,17 +196,14 @@ func _init():
 func d(sides: int) -> int:
     return randi_range(1, sides)
 
-func wait_time(time: float) -> Signal:
+func wait(time: float) -> Signal:
     return Novelogic.get_tree().create_timer(time).timeout
-
-func wait_finish(tween: Tween) -> Signal:
-    return tween.finished
 ```
 
 ```novelogic
 i = d(6)
 # await is not required
-wait_time(0.5)
+wait(0.5)
 
 AudioManager.play_music("night")
 
@@ -216,8 +213,8 @@ AudioManager.play_music("night")
 
 #### `:command:` Tips
 
-- The command calls the `snake_case` function. e.g. `:waitTime: 0.5` means `wait_time(0.5)`.
+- The command calls the `snake_case` function. e.g. `:shakeCamera:` means `shake_camera()`.
 
-- Support variables and functions. e.g. `:waitFinish: tween=t` means `wait_finish(t)`.
+- Use `!param` and `param!` as shortcuts for boolean parameter values. e.g. `:shake: camera !loop wait!` means `shake(camera, false, true)`.
 
 - Only the first unnamed argument will be the first argument of the function. e.g. `:bgm: "night" fade_time=0.5 "day"` means `bgm("night", 0.5)`.

@@ -197,18 +197,14 @@ func _init():
 func d(sides: int) -> int:
     return randi_range(1, sides)
 
-func wait_time(time: float) -> Signal:
+func wait(time: float) -> Signal:
     return Novelogic.get_tree().create_timer(time).timeout
-
-
-func wait_finish(tween: Tween) -> Signal:
-    return tween.finished
 ```
 
 ```novelogic
 i = d(6)
 # 无需 await
-wait_time(0.5)
+wait(0.5)
 
 AudioManager.play_music("夜晚")
 
@@ -218,8 +214,8 @@ AudioManager.play_music("夜晚")
 
 #### `:指令:` 提示
 
-- 指令调用 `snake_case` 的函数。如 `:waitTime: 0.5` 等价于 `wait_time(0.5)`。
+- 指令调用 `snake_case` 的函数。如 `:shakeCamera:` 等价于 `shake_camera()`。
 
-- 支持变量与函数。如 `:waitFinish: tween=t` 等价于 `wait_finish(t)`。
+- 使用 `!param` 和 `param!` 作为布尔参数值的简略写法。如 `:shake: camera !loop wait!` 等价于 `shake(camera, false, true)`。
 
 - 只有首个匿名参数会作为函数的首个参数。如 `:bgm: "夜晚" fade_time=0.5 "白天"` 等价于 `bgm("夜晚", 0.5)`。

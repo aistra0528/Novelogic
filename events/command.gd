@@ -69,6 +69,10 @@ func process():
 				var j := pair.find("=")
 				if j != -1:
 					named_args[pair.left(j)] = VarString.new(pair.right(-j - 1))
+				elif pair.begins_with("!"):
+					named_args[pair.right(-1)] = false
+				elif pair.ends_with("!"):
+					named_args[pair.left(-1)] = true
 				elif 0 not in named_args:
 					named_args[0] = VarString.new(pair)
 			expression = "%s(%s)" % [method, ", ".join(_unname(method, named_args))]
