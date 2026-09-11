@@ -12,14 +12,17 @@ var dialog_edit: LineEdit
 @onready var output_edit: LineEdit = %OutputEdit
 @onready var locale_edit: LineEdit = %LocaleEdit
 @onready var placeholder_edit: LineEdit = %PlaceholderEdit
-@onready var mark_box: CheckBox = %MarkBox
+@onready var context_box: CheckBox = %ContextBox
 @onready var dialog := EditorFileDialog.new()
 
 
 func _ready():
 	locale_edit.text = ProjectSettings.get_setting("internationalization/locale/fallback")
 	dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
-	dialog.dir_selected.connect(func(dir: String): dialog_edit.text = dir)
+	dialog.dir_selected.connect(
+		func(dir: String):
+			dialog_edit.text = dir,
+	)
 	add_child(dialog)
 
 
@@ -39,12 +42,19 @@ func _on_generate_button_pressed(format: Format):
 	var extension := ".csv" if format == Format.CSV else ".pot"
 	var locale := locale_edit.text
 	var placeholder := placeholder_edit.text
-	var mark_in_context := mark_box.button_pressed
+	var more_context := context_box.button_pressed
 	if not DirAccess.dir_exists_absolute(input) or not DirAccess.dir_exists_absolute(output):
 		return
 	for file in DirAccess.get_files_at(input):
 		if file.get_extension() == "nvs":
-			generate_file(input.path_join(file), output.path_join(file.get_basename() + extension), locale, placeholder, mark_in_context, format)
+			generate_file(
+				input.path_join(file),
+				output.path_join(file.get_basename() + extension),
+				locale,
+				placeholder,
+				more_context,
+				format,
+			)
 
 
 func _on_generate_csv_pressed():
@@ -55,21 +65,41 @@ func _on_generate_pot_pressed():
 	_on_generate_button_pressed(Format.POT)
 
 
-func generate_file(input: String, output: String, locale: String, placeholder: String, mark_in_context: bool, format: Format):
+func generate_file(
+	input: String,
+	output: String,
+	locale: String,
+	placeholder: String,
+	more_context: bool,
+	format: Format,
+):
 	var output_file := FileAccess.open(output, FileAccess.WRITE)
 	if not output_file:
 		return
 	match format:
 		Format.CSV:
-			for line in generate_csv(input, locale, placeholder, mark_in_context, format):
+			for line in generate_csv(input, locale, placeholder, more_context, format):
 				output_file.store_csv_line(line)
 		Format.POT:
-			for line in generate_pot(input, locale, placeholder, mark_in_context, format):
+			for line in generate_pot(input, locale, placeholder, more_context, format):
 				output_file.store_line(line)
 
 
-func generate_array(path: String, placeholder: String, mark_in_context: bool, format: Format) -> Array[PackedStringArray]:
-	var scenario := NovelogicScenario.from_file(path, [ScenarioEvent.Type.TEXT, ScenarioEvent.Type.DIALOGUE, ScenarioEvent.Type.CHOICE, ScenarioEvent.Type.INPUT])
+func generate_array(
+	path: String,
+	placeholder: String,
+	more_context: bool,
+	format: Format,
+) -> Array[PackedStringArray]:
+	var scenario := NovelogicScenario.from_file(
+		path,
+		[
+			ScenarioEvent.Type.TEXT,
+			ScenarioEvent.Type.DIALOGUE,
+			ScenarioEvent.Type.CHOICE,
+			ScenarioEvent.Type.INPUT,
+		],
+	)
 	if not scenario:
 		return []
 	var array: Array[PackedStringArray]
@@ -84,7 +114,7 @@ func generate_array(path: String, placeholder: String, mark_in_context: bool, fo
 				text = (event as ScenarioText).text
 			ScenarioEvent.Type.DIALOGUE:
 				text = (event as ScenarioDialogue).dialogue
-				context = (event.who + ":" + event.mark) if event.mark and mark_in_context else event.who
+				context = (event.who + ":" + event.which) if event.which and more_context else event.who
 			ScenarioEvent.Type.CHOICE:
 				text = (event as ScenarioChoice).choice
 				context = "CHOICE"
@@ -101,13 +131,19 @@ func generate_array(path: String, placeholder: String, mark_in_context: bool, fo
 	return array
 
 
-func generate_csv(path: String, locale: String, placeholder: String, mark_in_context: bool, format: Format) -> Array[PackedStringArray]:
+func generate_csv(
+	path: String,
+	locale: String,
+	placeholder: String,
+	more_context: bool,
+	format: Format,
+) -> Array[PackedStringArray]:
 	var array: Array[PackedStringArray]
 	var plural_rules := TranslationServer.get_plural_rules(locale)
 	var plural_n := int(plural_rules.get_slice(";", 0))
 	array.append(PackedStringArray(["keys", "?context", "?plural", "_locations", locale]))
 	array.append(PackedStringArray(["?pluralrule", "", "", "", plural_rules]))
-	for a in generate_array(path, placeholder, mark_in_context, format):
+	for a in generate_array(path, placeholder, more_context, format):
 		var plural_msg := a[0] if a[0].contains(placeholder) else ""
 		array.append(PackedStringArray([a[0], a[1], plural_msg, a[2], a[0]]))
 		if plural_msg and plural_n > 1:
@@ -116,9 +152,19 @@ func generate_csv(path: String, locale: String, placeholder: String, mark_in_con
 	return array
 
 
-func generate_pot(path: String, locale: String, placeholder: String, mark_in_context: bool, format: Format) -> PackedStringArray:
+func generate_pot(
+	path: String,
+	locale: String,
+	placeholder: String,
+	more_context: bool,
+	format: Format,
+) -> PackedStringArray:
 	var array := PackedStringArray()
-	var project_info := str(ProjectSettings.get_setting("application/config/name"), " ", ProjectSettings.get_setting("application/config/version"))
+	var project_info := str(
+		ProjectSettings.get_setting("application/config/name"),
+		" ",
+		ProjectSettings.get_setting("application/config/version"),
+	)
 	var plural_rules := TranslationServer.get_plural_rules(locale)
 	var plural_n := int(plural_rules.get_slice(";", 0))
 	array.append('msgid ""')
@@ -129,7 +175,7 @@ func generate_pot(path: String, locale: String, placeholder: String, mark_in_con
 	array.append('"Content-Type: text/plain; charset=UTF-8\\n"')
 	array.append('"Content-Transfer-Encoding: 8-bit\\n"')
 	array.append('"Plural-Forms: %s\\n"' % plural_rules)
-	for a: PackedStringArray in generate_array(path, placeholder, mark_in_context, format):
+	for a: PackedStringArray in generate_array(path, placeholder, more_context, format):
 		array.append("")
 		array.append("#: " + a[2])
 		var id := a[0].c_escape().replace("\\'", "'")

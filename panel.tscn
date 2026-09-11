@@ -79,9 +79,9 @@ layout_mode = 2
 [node name="Label" type="Label" parent="VBoxContainer/HBoxContainer5" unique_id=1057036572]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Dialogue Mark in Context"
+text = "More Context"
 
-[node name="MarkBox" type="CheckBox" parent="VBoxContainer/HBoxContainer5" unique_id=304905071]
+[node name="ContextBox" type="CheckBox" parent="VBoxContainer/HBoxContainer5" unique_id=304905071]
 unique_name_in_owner = true
 layout_mode = 2
 

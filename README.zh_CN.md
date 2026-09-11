@@ -44,7 +44,7 @@ signal text_started(text: String)
 ### 对话
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, how: String, which: String)
 ```
 
 ```novelogic
@@ -61,30 +61,30 @@ signal dialogue_started(dialogue: String, who: String, what: String, mark: Strin
 
 ### 标签
 ```novelogic
-@标签
+* 标签
 <> 调用标签
 -> 跳转标签
 
-@调用标签
+* 调用标签
 # 返回标签或剧本调用处，否则结束剧本
 <-
 
-@跳转标签
+* 跳转标签
 -> 跳转剧本
 
-@满足条件时跳转
+* 满足条件时跳转
 -> 跳转剧本 :: 1 + 1 == 2
 
-@跳转剧本
+* 跳转剧本
 -> 剧本@标签
 
-@调用剧本附带变量
+* 调用剧本附带变量
 <> 剧本@标签
 
-@跳转开头
+* 跳转开头
 -> START
 
-@结束剧本
+* 结束剧本
 -> END
 
 ```
@@ -166,11 +166,11 @@ func handle_input(input: Variant)
 ```
 
 ```novelogic
-who ?? 请输入你的名字 :: 爱丽丝
+player ?> 请输入你的名字 || 爱丽丝
 
-玩家: 我的名字是{who}。
+玩家: 我的名字是{player}。
 
-answer ?? 生命、宇宙和万物的终极答案
+answer ?> 生命、宇宙和万物的终极答案
 
 if answer == "42":
     ...
@@ -179,7 +179,7 @@ else:
 ```
 
 ```gdscript
-func _on_dialogue_started(dialogue: String, who: String, what: String, mark: String):
+func _on_dialogue_started(dialogue: String, who: String, how: String, which: String):
     dialogue = dialogue.format(Novelogic.scenario_variables)
     ...
 ```
@@ -209,13 +209,13 @@ wait(0.5)
 AudioManager.play_music("夜晚")
 
 # 支持命名与可选参数
-:bgm: "夜晚" fade_time=0.5 volume=0.6 loop=true
+@bgm "夜晚" fade_time=0.5 volume=0.6 loop=true
 ```
 
-#### `:指令:` 提示
+#### `@指令` 提示
 
-- 指令调用 `snake_case` 的函数。如 `:shakeCamera:` 等价于 `shake_camera()`。
+- 指令调用 `snake_case` 的函数。如 `@shakeCamera` 等价于 `shake_camera()`。
 
-- 使用 `!param` 和 `param!` 作为布尔参数值的简略写法。如 `:shake: camera !loop wait!` 等价于 `shake(camera, false, true)`。
+- 使用 `!param` 和 `param!` 作为布尔参数值的简略写法。如 `@shake camera !loop wait!` 等价于 `shake(camera, false, true)`。
 
-- 只有首个匿名参数会作为函数的首个参数。如 `:bgm: "夜晚" fade_time=0.5 "白天"` 等价于 `bgm("夜晚", 0.5)`。
+- 只有首个匿名参数会作为函数的首个参数。如 `@bgm "夜晚" fade_time=0.5 "白天"` 等价于 `bgm("夜晚", 0.5)`。

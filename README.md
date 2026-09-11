@@ -43,7 +43,7 @@ text.
 ### Dialogues
 
 ```gdscript
-signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, how: String, which: String)
 ```
 
 ```novelogic
@@ -60,30 +60,30 @@ Alice@smile:1godotresuid: It also works!
 
 ### Labels
 ```novelogic
-@Label
+* Label
 <> CallLabel
 -> JumpToLabel
 
-@CallLabel
+* CallLabel
 # Return where label/scenario called, or end the scenario
 <-
 
-@JumpToLabel
+* JumpToLabel
 -> JumpToScenario
 
-@JumpIfCondition
+* JumpIfCondition
 -> JumpToScenario :: 1 + 1 == 2
 
-@JumpToScenario
+* JumpToScenario
 -> scenario@Label
 
-@CallScenarioWithVariables
+* CallScenarioWithVariables
 <> scenario@Label
 
-@JumpToBeginning
+* JumpToBeginning
 -> START
 
-@EndScenario
+* EndScenario
 -> END
 
 ```
@@ -165,11 +165,11 @@ func handle_input(input: Variant)
 ```
 
 ```novelogic
-who ?? Input your name :: Alice
+player ?> Input your name || Alice
 
-Player: My name is {who}.
+Player: My name is {player}.
 
-answer ?? The Answer to the Ultimate Question of Life, the Universe, and Everything
+answer ?> The Answer to the Ultimate Question of Life, the Universe, and Everything
 
 if answer == "42":
     ...
@@ -178,7 +178,7 @@ else:
 ```
 
 ```gdscript
-func _on_dialogue_started(dialogue: String, who: String, what: String, mark: String):
+func _on_dialogue_started(dialogue: String, who: String, how: String, which: String):
     dialogue = dialogue.format(Novelogic.scenario_variables)
     ...
 ```
@@ -208,13 +208,13 @@ wait(0.5)
 AudioManager.play_music("night")
 
 # Support named and optional arguments
-:bgm: "night" fade_time=0.5 volume=0.6 loop=true
+@bgm "night" fade_time=0.5 volume=0.6 loop=true
 ```
 
-#### `:command:` Tips
+#### `@command` Tips
 
-- The command calls the `snake_case` function. e.g. `:shakeCamera:` means `shake_camera()`.
+- The command calls the `snake_case` function. e.g. `@shakeCamera` means `shake_camera()`.
 
-- Use `!param` and `param!` as shortcuts for boolean parameter values. e.g. `:shake: camera !loop wait!` means `shake(camera, false, true)`.
+- Use `!param` and `param!` as shortcuts for boolean parameter values. e.g. `@shake camera !loop wait!` means `shake(camera, false, true)`.
 
-- Only the first unnamed argument will be the first argument of the function. e.g. `:bgm: "night" fade_time=0.5 "day"` means `bgm("night", 0.5)`.
+- Only the first unnamed argument will be the first argument of the function. e.g. `@bgm "night" fade_time=0.5 "day"` means `bgm("night", 0.5)`.

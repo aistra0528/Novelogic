@@ -2,8 +2,8 @@ class_name ScenarioDialogue
 extends ScenarioEvent
 
 var who := ""
-var what := ""
-var mark := ""
+var how := ""
+var which := ""
 var dialogue := ""
 
 
@@ -15,8 +15,8 @@ func process():
 			var result := reg.search(lines[i])
 			if result:
 				who = result.get_string("name")
-				what = result.get_string("what")
-				mark = result.get_string("mark")
+				how = result.get_string("how")
+				which = result.get_string("which")
 				dialogue = result.get_string("expression")
 		else:
 			dialogue += "\n"
@@ -28,4 +28,4 @@ func process():
 
 
 func execute():
-	Novelogic.dialogue_started.emit(dialogue, who, what, mark)
+	Novelogic.dialogue_started.emit(dialogue, who, how, which)

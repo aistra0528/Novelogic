@@ -60,10 +60,10 @@ func process():
 		expression = lines[0].right(indent * -4)
 	else:
 		expression = lines[0]
-	if expression.begins_with(":"):
-		var i := expression.find(" ", 2)
+	if expression.begins_with("@"):
+		var i := expression.find(" ", 1)
 		if i != -1:
-			var method := expression.substr(1, i - 2).to_snake_case()
+			var method := expression.substr(1, i - 1).to_snake_case()
 			var named_args: Dictionary
 			for pair in _split(expression.right(-i - 1)):
 				var j := pair.find("=")
@@ -77,7 +77,7 @@ func process():
 					named_args[0] = VarString.new(pair)
 			expression = "%s(%s)" % [method, ", ".join(_unname(method, named_args))]
 		else:
-			expression = expression.substr(1, expression.length() - 2).to_snake_case() + "()"
+			expression = expression.right(-1).to_snake_case() + "()"
 	processed = true
 
 

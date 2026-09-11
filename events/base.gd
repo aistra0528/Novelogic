@@ -18,16 +18,16 @@ enum Type {
 
 const REGEX = {
 	COMMENT = "^{INDENT}*{COMMENT}$",
-	DIALOGUE = "^{INDENT}*{NAME}(@{WHAT})?:({MARK}:)? {EXPRESSION}$",
+	DIALOGUE = "^{INDENT}*{NAME}(@{HOW})?:({WHICH}:)? {EXPRESSION}$",
 	CHOICE = "^{INDENT}*- {EXPR}( :: {EXPRESSION})?$",
 	JUMP = "^{INDENT}*{GOTO} {WHERE}( :: {EXPRESSION})?$",
-	LABEL = "^{INDENT}*@{NAME}$",
+	LABEL = "^{INDENT}*\\* {NAME}$",
 	RETURN = "^{INDENT}*<-$",
-	INPUT = "^{INDENT}*{VARIABLE} \\?\\? {EXPR}( :: {EXPRESSION})?$",
+	INPUT = "^{INDENT}*{VARIABLE} \\?> {EXPR}( \\|\\| {EXPRESSION})?$",
 	ASSIGNMENT = "^{INDENT}*{VARIABLE} {ASSIGNMENT} {EXPRESSION}$",
 	CONDITION = "^{INDENT}*{BRANCH}( {EXPRESSION})?:$",
 	WHEN = "^{INDENT}*when( {EXPRESSION})?:$",
-	COMMAND = "^{INDENT}*({VARIABLE}\\(.*\\)|:{NAME}:( {EXPRESSION})?)$",
+	COMMAND = "^{INDENT}*({VARIABLE}\\(.*\\)|@{NAME}( {EXPRESSION})?)$",
 	TEXT = "^{INDENT}*.+$",
 	INDENT = "^{INDENT}+",
 }
@@ -35,8 +35,8 @@ const REGEX = {
 const CAPTURE = {
 	INDENT = "(    )",
 	COMMENT = "(#.*)",
-	WHAT = "(?<what>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
-	MARK = "(?<mark>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
+	HOW = "(?<how>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
+	WHICH = "(?<which>([A-Za-z0-9]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	NAME = "(?<name>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",
 	GOTO = "(?<goto>->|<>)",
 	WHERE = "((?<scenario>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)@)?(?<label>([A-Za-z]|[^\\x00-\\x7F])(\\w|[^\\x00-\\x7F])*)",

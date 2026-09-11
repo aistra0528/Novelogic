@@ -4,7 +4,7 @@ signal scenario_started
 signal scenario_ended
 signal error_occurred(message: String, title: String)
 signal text_started(text: String)
-signal dialogue_started(dialogue: String, who: String, what: String, mark: String)
+signal dialogue_started(dialogue: String, who: String, how: String, which: String)
 signal choice_started(choices: PackedStringArray)
 signal input_started(prompt: String, default: String)
 
@@ -64,7 +64,10 @@ func handle_event(index: int, ignore_indent: bool = false):
 		return
 	elif current_indent > current_event.indent:
 		current_indent = current_event.indent
-		if current_event is ScenarioCondition and (current_event as ScenarioCondition).require_branch() != ScenarioCondition.BRANCH.IF:
+		if (
+			current_event is ScenarioCondition
+			and (current_event as ScenarioCondition).require_branch() != ScenarioCondition.BRANCH.IF
+		):
 			while true:
 				index += 1
 				if index >= current_scenario.events.size():
@@ -77,7 +80,10 @@ func handle_event(index: int, ignore_indent: bool = false):
 				elif current_indent > event.indent:
 					current_indent = event.indent
 
-				if event is not ScenarioCondition or (event as ScenarioCondition).require_branch() == ScenarioCondition.BRANCH.IF:
+				if (
+					event is not ScenarioCondition
+					or (event as ScenarioCondition).require_branch() == ScenarioCondition.BRANCH.IF
+				):
 					current_index = index
 					break
 
@@ -104,7 +110,10 @@ func handle_jump(label: String):
 		end_scenario()
 		return
 	for i in current_scenario.events.size():
-		if current_scenario.events[i] is ScenarioLabel and label == (current_scenario.events[i] as ScenarioLabel).require_label():
+		if (
+			current_scenario.events[i] is ScenarioLabel
+			and label == (current_scenario.events[i] as ScenarioLabel).require_label()
+		):
 			handle_event(i, true)
 			return
 	error = ERR_DOES_NOT_EXIST
@@ -132,11 +141,17 @@ func eval(expression: String, from_line: int) -> Variant:
 	var expr := Expression.new()
 	error = expr.parse(expression, scenario_variables.keys())
 	if error:
-		error_occurred.emit(str(current_scenario.path, ":", from_line, ": ", expression), "Bad expression")
+		error_occurred.emit(
+			str(current_scenario.path, ":", from_line, ": ", expression),
+			"Bad expression",
+		)
 		return null
 	var result := expr.execute(scenario_variables.values(), extension)
 	if expr.has_execute_failed():
 		error = FAILED
-		error_occurred.emit(str(current_scenario.path, ":", from_line, ": ", expression), "Execute failed")
+		error_occurred.emit(
+			str(current_scenario.path, ":", from_line, ": ", expression),
+			"Execute failed",
+		)
 		return null
 	return result
